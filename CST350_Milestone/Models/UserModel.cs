@@ -1,4 +1,5 @@
 ﻿
+
 namespace CST350_Milestone.Models
 {
     public class UserModel
@@ -13,6 +14,16 @@ namespace CST350_Milestone.Models
         public string Email { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
+
+        internal void SetPassword(string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool VerifyPassword(string password)
+        {
+            throw new NotImplementedException();
+        }
         // We make do not need salt
         //public byte[] Salt { get; set; }
 

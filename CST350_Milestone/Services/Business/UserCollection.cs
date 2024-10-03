@@ -1,0 +1,147 @@
+﻿using Microsoft.AspNetCore.Identity;
+using CST350_Milestone.Interface;
+using CST350_Milestone.Models;
+using System.Security.Cryptography;
+using System.Text;
+using PasswordVerificationResult = Microsoft.AspNetCore.Identity.PasswordVerificationResult;
+
+namespace CST350_Milestone.Services.Business
+{
+    public class UserCollection : IUserManager
+    {
+        // This is an in-memory list of users. Later this will be a db connection.
+        // The _ prefix indicates a private field
+        private List<UserModel>? _users;
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public UserCollection() 
+        {
+            _users = new List<UserModel>();
+            // Create some user account
+            GenerateUserData();
+        }
+
+        /// <summary>
+        /// Create two or more new ussers in the GenerateUserData method. Use the AddUser method to ensure new user accounts gets a valid Id number
+        /// </summary>
+        private void GenerateUserData()
+        {
+            // Create the first user
+            UserModel user1 = new UserModel();
+            user1.UserName = "Dorothy";
+            user1.SetPassword("Nguyen");
+            AddUser(user1);
+        }
+
+        /// <summary>
+        /// Generate an Id number automatically for the new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public int AddUser(UserModel user)
+        {
+            // Set the user's Id to the next available number
+            user.Id = _users.Count + 1;
+            _users.Add(user);
+            return user.Id;
+        }
+
+        /// <summary>
+        /// This method will bebe used to verify a login attempt
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public int CheckCredentials(string username, string password)
+        {
+            //Given a username and password, find a matching user 
+            // Return the user's Id
+            // Iterate over the Usermodel
+            foreach (UserModel user in _users)
+            {
+                // Get the id
+                if (user.UserName == username && user.VerifyPassword(password))
+                {
+                    return user.Id;
+                }
+            }
+            // No matches found. Invalid login 
+            return -1;
+        }
+
+        /// <summary>
+        /// Method to delete a user
+        /// </summary>
+        /// <param name="user"></param>
+        public void DeleteUser(UserModel user)
+        {
+            _users.Remove(user);
+        }
+
+        /// <summary>
+        /// Return all users in list
+        /// </summary>
+        /// <returns></returns>
+        public List<UserModel> GetAllUsers()
+        {
+            return _users;
+        }
+
+        /// <summary>
+        /// Given an id Number, Find the user with the matching id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public UserModel GetUserById(int id)
+        {
+            // Iterate through the model and find the user
+            //foreach (UserModel user in _users)
+            //{
+            //    if (user.Id == id)
+            //    {
+            //        return user;
+            //    }
+            //}
+            //// If no user is found, return an empty UserModel
+            //return new UserModel();
+
+            // OR
+            // Use a Lambda Expression
+            /* Lambda is just a way to write a quick, mini method without giving it a name
+              It allows you to perform simple tasks without having to write a full method every time*/
+            /* 
+            1) Iterate over the listh: The Find method iterates through each UserModel object in the _users list (private user list)
+            2) Apply the Condition: for each user, the lambda expression u => u.Id == Id is evaluated. If u.Id matches the id provided to the method, that UserModel is considered a match
+            3) Return the first match: The Find method returns the first user that satisfies the condition u.Id = id*
+            4) Return null if No Match: If no user in the list has the specified id, the method returns null.*/
+            return _users.Find(x => x.Id == id);
+        }
+
+        /// <summary>
+        /// Find an existing user and update that user
+        /// </summary>
+        /// <param name="user"></param>
+        public void UpdateUser(UserModel user)
+        {
+            // Declare and Initialize
+            int userId = -1;
+            UserModel findUser = new UserModel();
+
+
+            // Find mathing id number
+            // findUser object will equal null if not found
+            findUser = GetUserById(user.Id);
+
+            // Update the existing user
+            if(findUser != null)
+            {
+                // Get the index of the user to update
+                userId = _users.IndexOf(findUser);
+                // Update the user at this Id
+                _users[userId] = user;
+            }
+        }
+    }
+}
