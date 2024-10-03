@@ -1,5 +1,7 @@
 ﻿
 
+using Microsoft.AspNetCore.Identity;
+
 namespace CST350_Milestone.Models
 {
     public class UserModel
@@ -14,18 +16,34 @@ namespace CST350_Milestone.Models
         public string Email { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
-
-        internal void SetPassword(string v)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool VerifyPassword(string password)
-        {
-            throw new NotImplementedException();
-        }
-        // We make do not need salt
+        // We may do not need salt
         //public byte[] Salt { get; set; }
+
+        public void SetPassword(string password)
+        {
+            // Delare and Initialize
+            IPasswordHasher<UserModel> hasher = new PasswordHasher<UserModel>();
+
+            // Set password hash using hasher method
+            PasswordHash = hasher.HashPassword(this, password);
+        }
+
+        public bool VerifyPassword(string password)
+        {
+            // Declare and Initaialize
+            IPasswordHasher<UserModel> hasher = new PasswordHasher<UserModel>();
+
+            // Check if password matches the password hash
+            PasswordVerificationResult result = hasher.VerifyHashedPassword(this, PasswordHash, password);
+
+            // Check and return result
+            if (result == PasswordVerificationResult.Success)
+            {
+                return true;
+            }
+            return false;
+        }
+        
 
     }
 }
