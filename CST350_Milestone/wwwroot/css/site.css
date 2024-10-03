@@ -47,8 +47,15 @@ body {
 h1 {
     font-family: Trust;
     color: #6B71FF;
+    text-align:center;
 }
 
 .btn {
     margin-top: 1vw;
 }
+
+/*align the register and login form to center*/
+div .row {
+    justify-content:space-around;
+}
+
