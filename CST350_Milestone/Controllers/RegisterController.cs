@@ -2,7 +2,7 @@
 
 namespace CST350_Milestone.Controllers
 {
-    public class LoginController : Controller
+    public class RegisterController : Controller
     {
         public IActionResult Index()
         {
