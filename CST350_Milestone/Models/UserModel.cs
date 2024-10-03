@@ -12,7 +12,7 @@ namespace CST350_Milestone.Models
         public string LastName { get; set; }
         public string Sex { get; set; }
         public int Age { get; set; }
-        public int State { get; set; }
+        public string State { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }

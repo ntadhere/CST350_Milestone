@@ -32,6 +32,13 @@ namespace CST350_Milestone.Services.Business
             UserModel user1 = new UserModel();
             user1.UserName = "Dorothy";
             user1.SetPassword("Nguyen");
+            user1.FirstName = "Dorothy";
+            user1.LastName = "Nguyen";
+            user1.Sex = "Female";
+            user1.Age = 20;
+            user1.State = "North Carolina";
+            user1.Email = "dnguyen54@my.gcu.edu";
+
             AddUser(user1);
         }
 
