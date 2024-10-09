@@ -59,5 +59,17 @@ namespace CST350_Milestone.Controllers
         {
             return View("StartGame");
         }
+
+        /// <summary>
+        /// Log user out and remove session
+        /// </summary>
+        /// <returns></returns>
+        [SessionCheckFilter]
+        public IActionResult Logout()
+        {
+            //Remove the ssion
+            HttpContext.Session.Remove("User");
+            return View("Login");
+        }
     }
 }
