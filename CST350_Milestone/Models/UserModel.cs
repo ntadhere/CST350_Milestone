@@ -27,23 +27,5 @@ namespace CST350_Milestone.Models
             // Set password hash using hasher method
             PasswordHash = hasher.HashPassword(this, password);
         }
-
-        public bool VerifyPassword(string password)
-        {
-            // Declare and Initaialize
-            IPasswordHasher<UserModel> hasher = new PasswordHasher<UserModel>();
-
-            // Check if password matches the password hash
-            PasswordVerificationResult result = hasher.VerifyHashedPassword(this, PasswordHash, password);
-
-            // Check and return result
-            if (result == PasswordVerificationResult.Success)
-            {
-                return true;
-            }
-            return false;
-        }
-        
-
     }
 }

@@ -69,7 +69,7 @@ namespace CST350_Milestone.Services.Business
             foreach (UserModel user in _users)
             {
                 // Get the id
-                if (user.UserName == username && user.VerifyPassword(password))
+                if (user.UserName == username && VerifyPassword(password, user))
                 {
                     return user.Id;
                 }
@@ -104,25 +104,6 @@ namespace CST350_Milestone.Services.Business
         public UserModel GetUserById(int id)
         {
             // Iterate through the model and find the user
-            //foreach (UserModel user in _users)
-            //{
-            //    if (user.Id == id)
-            //    {
-            //        return user;
-            //    }
-            //}
-            //// If no user is found, return an empty UserModel
-            //return new UserModel();
-
-            // OR
-            // Use a Lambda Expression
-            /* Lambda is just a way to write a quick, mini method without giving it a name
-              It allows you to perform simple tasks without having to write a full method every time*/
-            /* 
-            1) Iterate over the listh: The Find method iterates through each UserModel object in the _users list (private user list)
-            2) Apply the Condition: for each user, the lambda expression u => u.Id == Id is evaluated. If u.Id matches the id provided to the method, that UserModel is considered a match
-            3) Return the first match: The Find method returns the first user that satisfies the condition u.Id = id*
-            4) Return null if No Match: If no user in the list has the specified id, the method returns null.*/
             return _users.Find(x => x.Id == id);
         }
 
@@ -149,6 +130,22 @@ namespace CST350_Milestone.Services.Business
                 // Update the user at this Id
                 _users[userId] = user;
             }
+        }
+
+        public bool VerifyPassword(string password, UserModel user)
+        {
+            // Declare and Initaialize
+            IPasswordHasher<UserModel> hasher = new PasswordHasher<UserModel>();
+
+            // Check if password matches the password hash
+            PasswordVerificationResult result = hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+            // Check and return result
+            if (result == PasswordVerificationResult.Success)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
