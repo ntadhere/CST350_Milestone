@@ -3,7 +3,7 @@
     public class SexViewModel
     {
         public bool IsSelected { get; set; }
-        public string Sex { get; set; }
+        public string GenderOption { get; set; }
     }
     public class RegisterViewModel
     {
@@ -31,9 +31,9 @@
             // Create the selection we want for checkboxes
             Sex = new List<SexViewModel>
             {
-                new SexViewModel{Sex = "Male", IsSelected = false},
-                new SexViewModel{Sex = "Felmale", IsSelected = false},
-                new SexViewModel{Sex = "Prefer not to say", IsSelected = false},
+                new SexViewModel{GenderOption = "Male", IsSelected = false},
+                new SexViewModel{GenderOption = "Felmale", IsSelected = false},
+                new SexViewModel{GenderOption = "Prefer not to say", IsSelected = false},
             };
         }
     }

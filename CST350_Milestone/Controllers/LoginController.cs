@@ -71,5 +71,63 @@ namespace CST350_Milestone.Controllers
             HttpContext.Session.Remove("User");
             return View("Login");
         }
+
+        /// <summary>
+        /// Show the Registration Form with all the checkboxes
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Register()
+        {
+            // Invokes the constructor we created
+            // which has the list of all the checkboxes
+            return View(new RegisterViewModel());
+        }
+
+        /// <summary>
+        /// This action method takes the inputs from the registraction view and will process the results
+        /// </summary>
+        /// <param name="registerViewModel"></param>
+        /// <returns></returns>
+        public IActionResult ProcessRegister(RegisterViewModel registerViewModel)
+        {
+            //Create a new instance of UserModel to store the new user's information
+            UserModel user = new UserModel();
+
+            // Set the username, firstname, lastname, email, state, age of the new user from the RegisterViewModel passed from the form 
+            user.UserName = registerViewModel.UserName;
+            user.FirstName = registerViewModel.FirstName;
+            user.LastName = registerViewModel.LastName;
+            user.Email = registerViewModel.Email;
+            user.State = registerViewModel.State;
+            user.Age = registerViewModel.Age;
+
+            // Set the password or the user by calling the SetPassword method
+            user.SetPassword(registerViewModel.Password);
+
+            // iNITIALIZE THE USER'S gROUPS AS AN EMPTY STRING
+            user.Sex = "";
+
+            // Initialize a sringBuilder to concatenate the group names efficiently
+            StringBuilder sexBuilder = new StringBuilder();
+
+            // Loop through each group in the RegisterViewModel.Groups list
+            // (groups selected by the user)
+            foreach (var sex in registerViewModel.Sex)
+            {
+                // Check if the group is selected by the user (IsSelected is true)
+                if (sex.IsSelected)
+                {
+                    // Append the group name followed by a comma to the StringBuilder
+                    sexBuilder.Append(sex.GenderOption).Append(",");
+                }
+            }
+            // Remove the trailing comma from the Groups string (if any)
+            // So the format is clean
+            user.Sex = sexBuilder.ToString().TrimEnd(',');
+            // Add the new user to the users collection, typically this is saving the user to a database of in-memory list
+            users.AddUser(user);
+            // After processing the registration, return the "Index" view to display the login page
+            return View("Index");
+        }
     }
 }
