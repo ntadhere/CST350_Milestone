@@ -26,6 +26,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Added to enable sessions and keep login state
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -1,7 +1,8 @@
-﻿using CST350_Milestone.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using CST350_Milestone.Filter;
+using CST350_Milestone.Models;
 using CST350_Milestone.Services.Business;
-using Microsoft.AspNetCore.Mvc;
-
+using System.Text;
 namespace CST350_Milestone.Controllers
 {
     public class LoginController : Controller
@@ -19,20 +20,29 @@ namespace CST350_Milestone.Controllers
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
-        public IActionResult ProcessLogin(LoginViewModel loginViewModel)
+        public IActionResult ProcessLogin(string username, string password)
         {
             // Declare and Initialize 
             int result = -1;
+            string userJson = "";
+
+
+            // Create a new instance of 'UserModel' with propertires 'Id, Username, and PasswordHash'
+            // This represents the user data provided during the login attempt
+            UserModel userData = users.GetUserByUsername(username);
 
             // Is there a match
-            result = users.CheckCredentials(loginViewModel.Username, loginViewModel.Password);
+            result = users.CheckCredentials(username, password);
 
             // We know the result will be 0 if the cred check failed
             if (result >= 0)
             {
-                // Get the result and return it with the "UserModel"
-                UserModel user = users.GetUserById(result);
-                return View("LoginSuccess", user);
+                // Serialize the 'userData' object to JSON string
+                userJson = ServiceStack.Text.JsonSerializer.SerializeToString(userData);
+                // Store the 'userData in the session with the key "User"
+
+                // Return the LoginSUccess view passing the userData as a model
+                return View("LoginSuccess", userData);
             }
             // There is no need for an else
             return View("LoginFailure");

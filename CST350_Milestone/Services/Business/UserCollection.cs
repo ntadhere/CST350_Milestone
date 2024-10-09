@@ -32,7 +32,7 @@ namespace CST350_Milestone.Services.Business
             UserModel user1 = new UserModel();
             user1.UserName = "Dorothy";
             user1.SetPassword("Nguyen");
-            user1.FirstName = "Dorothy";
+            user1.FirstName = "Dao";
             user1.LastName = "Nguyen";
             user1.Sex = "Female";
             user1.Age = 20;
@@ -105,6 +105,16 @@ namespace CST350_Milestone.Services.Business
         {
             // Iterate through the model and find the user
             return _users.Find(x => x.Id == id);
+        }
+
+        /// <summary>
+        /// Given an user, then find the user with matching name
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public UserModel GetUserByUsername(string username)
+        {
+            return _users.Find(x => x.UserName == username);
         }
 
         /// <summary>
