@@ -39,7 +39,9 @@ namespace CST350_Milestone.Controllers
             {
                 // Serialize the 'userData' object to JSON string
                 userJson = ServiceStack.Text.JsonSerializer.SerializeToString(userData);
+
                 // Store the 'userData in the session with the key "User"
+                HttpContext.Session.SetString("User", userJson);
 
                 // Return the LoginSUccess view passing the userData as a model
                 return View("LoginSuccess", userData);
@@ -47,6 +49,15 @@ namespace CST350_Milestone.Controllers
             // There is no need for an else
             return View("LoginFailure");
 
+        }
+        /// <summary>
+        /// The annotation "SessionCheckFilter" triggers a request to run the filter
+        /// </summary>
+        /// <returns></returns>
+        [SessionCheckFilter]
+        public IActionResult StartGame()
+        {
+            return View("StartGame");
         }
     }
 }
