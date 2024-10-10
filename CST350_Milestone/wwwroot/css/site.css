@@ -2,6 +2,13 @@ html {
   font-size: 14px;
 }
 
+/* Updating font for whole webpage*/
+@font-face {
+    font-family: 'Trust';
+    src: url('/fonts/FZ-SG PAG Trust.ttf');
+}
+
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -18,5 +25,42 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/img/bg.svg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.5; /* Set opacity of the background image */
+        z-index: -1; /* Make sure the background is behind the content */
+    }
+
+
+h1 {
+    font-family: Trust;
+    color: #6B71FF;
+    text-align:center;
+}
+
+.btn {
+    margin-top: 1vw;
+}
+
+/*align the register and login form to center*/
+div .row {
+    justify-content:space-around;
+}
+
+/*border for the input box in general*/
+.form-control {
+    border: 0.1rem dashed #6B71FF;
+    border-radius: 1.5rem !important;
 }
