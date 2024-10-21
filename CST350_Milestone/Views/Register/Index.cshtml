@@ -1,6 +1,21 @@
 ﻿@model CST350_Milestone.Models.UserModel
 
-<h1>Register</h1>
+<div class="col1">
+    <div class="pad_1">
+        <h2>Search By ID</h2>
+        <form id="frmSearch" method="post" asp-controller="User" asp-action="Index">
+            <div class="wrapper">
+                <div class="bg">
+                    <input name="id" type="text" class="input input1" placeholder="Enter ID to search"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br /><br />
+
+<h1>Search Results</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
