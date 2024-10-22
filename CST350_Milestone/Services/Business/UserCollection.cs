@@ -21,7 +21,7 @@ namespace CST350_Milestone.Services.Business
         {
             _users = new List<UserModel>();
             // Create some user account
-            GenerateUserData();
+            // GenerateUserData();
         }
 
         /// <summary>
@@ -74,6 +74,47 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
+        /// Deletes a user from the database by their ID.
+        /// </summary>
+        /// <param name="id">The unique identifier (ID) of the user to be deleted.</param>
+        /// <returns>Returns true if the user was successfully deleted, otherwise false.</returns>
+        public bool DeleteUser(int id)
+        {
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Pass the user ID to the DataAccess layer for deletion and return the result.
+            return userDAO.DeleteUser(id);
+        }
+
+        /// <summary>
+        /// Retrieves all users from the database as a list of UserModel objects.
+        /// </summary>
+        /// <returns>Returns a list of all UserModel objects representing the users in the database.</returns>
+        public List<UserModel> GetAllUsers()
+        {
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the list of all users from the DataAccess layer and return it.
+            return userDAO.GetAllUsers();
+        }
+
+        /// <summary>
+        /// Retrieves a user by their ID from the database.
+        /// </summary>
+        /// <param name="id">The unique identifier (ID) of the user to retrieve.</param>
+        /// <returns>Returns the UserModel object representing the user with the specified ID, or null if no user is found.</returns>
+        public UserModel GetUserById(int id)
+        {
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the user by their ID from the DataAccess layer and return it.
+            return userDAO.GetUserById(id);
+        }
+
+        /// <summary>
         /// Retrieves a user by their username from the database.
         /// </summary>
         /// <param name="username">The username of the user to retrieve.</param>
@@ -85,35 +126,6 @@ namespace CST350_Milestone.Services.Business
 
             // Retrieve the user by their username from the DataAccess layer and return it.
             return userDAO.GetUserByUsername(username);
-        }
-
-        /// <summary>
-        /// Method to delete a user
-        /// </summary>
-        /// <param name="user"></param>
-        public void DeleteUser(UserModel user)
-        {
-            _users.Remove(user);
-        }
-
-        /// <summary>
-        /// Return all users in list
-        /// </summary>
-        /// <returns></returns>
-        public List<UserModel> GetAllUsers()
-        {
-            return _users;
-        }
-
-        /// <summary>
-        /// Given an id Number, Find the user with the matching id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public UserModel GetUserById(int id)
-        {
-            // Iterate through the model and find the user
-            return _users.Find(x => x.Id == id);
         }
 
 
@@ -156,11 +168,6 @@ namespace CST350_Milestone.Services.Business
                 return true;
             }
             return false;
-        }
-
-        public bool DeleteUser(int id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

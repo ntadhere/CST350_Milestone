@@ -129,6 +129,99 @@ namespace CST350_Milestone.Services.DataAccess
         } //End Check Credentials
 
         /// <summary>
+        /// Deletes a user from the UserAccount table in the database based on the provided user ID.
+        /// </summary>
+        /// <param name="id">The unique identifier (ID) of the user to be deleted from the database.</param>
+        /// <returns>Returns true if the user was successfully deleted; otherwise, false.</returns>
+        public bool DeleteUser(int id)
+        {
+            // Result flag to determine if the deletion was successful
+            bool isDeleted = false;
+
+            // Establish a new SQL connection using the provided connection string.
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // Open the connection to the database.
+                connection.Open();
+
+                // Define the SQL query to delete a user from the UserAccount table based on the user's ID.
+                // Using string formatting here is risky (SQL Injection), so it's better to use a parameterized query.
+                string query = "DELETE FROM Player WHERE Id = @Id";
+
+                // Create a SQL command object using the query and open connection.
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Add a parameter to safely pass the user ID, preventing SQL injection attacks.
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    // Execute the DELETE query and return the number of rows affected (i.e., the number of users deleted).
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    // If one or more rows were affected, the deletion was successful.
+                    if (rowsAffected > 0)
+                    {
+                        isDeleted = true;
+                    }
+                }
+            }
+            // Return whether the deletion was successful (true) or not (false).
+            return isDeleted;
+
+        } //End of DeleteUser
+
+        /// <summary>
+        /// Return a list of all the users in the db
+        /// </summary>
+        /// <returns></returns>
+        public List<UserModel> GetAllUsers()
+        {
+            // List to store the retrieved users
+            List<UserModel> users = new List<UserModel>();
+
+            // SQL query to select all users
+            string query = "SELECT Id, FirstName, LastName, Sex, Age, State, Email, Username, MyPassword FROM Player";
+
+            // Using a SQL connection
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                connection.Open();
+
+                // SQL command to execute the query
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Execute the command and obtain a reader
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Read all the rows from the result set
+                        while (reader.Read())
+                        {
+                            // Create a new UserModel for each row
+                            UserModel user = new UserModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Sex = reader.GetString(reader.GetOrdinal("Sex")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
+                            };
+
+                            // Add the user to the list
+                            users.Add(user);
+                        }
+                    }
+                }
+            }
+
+            // Return the list of users
+            return users;
+
+        } // End GetAllUser method
+
+        /// <summary>
         /// Get user by username and return it
         /// </summary>
         /// <param name="username"></param>
@@ -185,24 +278,57 @@ namespace CST350_Milestone.Services.DataAccess
 
         }// End of GetUserByUsername
 
-        public void DeleteUser(UserModel user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteUser(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<UserModel> GetAllUsers()
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// get user by user id and return it
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public UserModel GetUserById(int id)
         {
-            throw new NotImplementedException();
-        }
+            // Find the matching id number
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // Open the connection to the database
+                connection.Open();
+
+                // Define the SQL query to select a single users based on id
+                query = string.Format("SELECT * FROM Player WHERE Id = {0}", id);
+
+                // Create a SQL command object using the query and open connection
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Execute the command and obtain a SqlDataReader object to read the result set returned by the query
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records are returned (meaning a user with matching credentials exists)
+                        if (reader.Read())
+                        {
+                            // Create a UserModel object to store the user's details from the database
+                            UserModel user = new UserModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Sex = reader.GetString(reader.GetOrdinal("Sex")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
+                            };
+                            // Return the user's ID if the credential are valid
+                            return user;
+                        }
+                        // Return 0 if no matching user is found in the database
+                        // Create a UserModel object to store the user's details from the database
+                        UserModel user2 = new UserModel
+                        {
+                            Id = 0
+                        };
+                        return user2;
+                    }
+                }
+            }
+        } // End Get User by ID
     }
 }
