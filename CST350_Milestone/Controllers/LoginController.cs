@@ -25,6 +25,7 @@ namespace CST350_Milestone.Controllers
             // Declare and Initialize 
             int result = -1;
             string userJson = "";
+            UserModel user = null;  // added user
 
 
             // Create a new instance of 'UserModel' with propertires 'Id, Username, and PasswordHash'
