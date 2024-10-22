@@ -14,7 +14,7 @@ namespace CST350_Milestone.Models
         public int Age { get; set; }
         public string State { get; set; }
         public string Email { get; set; }
-        public string UserName { get; set; }
+        public string Username { get; set; }
         public string PasswordHash { get; set; }
         // We may do not need salt
         //public byte[] Salt { get; set; }
