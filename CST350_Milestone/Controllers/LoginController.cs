@@ -94,7 +94,8 @@ namespace CST350_Milestone.Controllers
             UserModel user = new UserModel();
 
             // Set the username, firstname, lastname, email, state, age of the new user from the RegisterViewModel passed from the form 
-            user.UserName = registerViewModel.UserName;
+            user.Username = registerViewModel.UserName;
+            user.PasswordHash = registerViewModel.Password;
             user.FirstName = registerViewModel.FirstName;
             user.LastName = registerViewModel.LastName;
             user.Email = registerViewModel.Email;
@@ -102,7 +103,7 @@ namespace CST350_Milestone.Controllers
             user.Age = registerViewModel.Age;
 
             // Set the password or the user by calling the SetPassword method
-            user.SetPassword(registerViewModel.Password);
+            //user.SetPassword(registerViewModel.Password);
 
             // iNITIALIZE THE USER'S gROUPS AS AN EMPTY STRING
             user.Sex = "";
@@ -125,9 +126,18 @@ namespace CST350_Milestone.Controllers
             // So the format is clean
             user.Sex = sexBuilder.ToString().TrimEnd(',');
             // Add the new user to the users collection, typically this is saving the user to a database of in-memory list
-            users.AddUser(user);
-            // After processing the registration, return the "Index" view to display the login page
-            return View("Index");
+            if (users.AddUser(user) > 0)
+            {
+                // Success, redirect to success page or display success message
+                // After processing the registration, return the "Index" view to display the login page
+                return View("Index");
+            }
+            else
+            {
+                // Failure, inform the user to re-enter data
+                ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
+                return View("ProcessRegister"); // Return to the form and show an error message
+            }
         }
     }
 }

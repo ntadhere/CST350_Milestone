@@ -4,6 +4,7 @@ using CST350_Milestone.Models;
 using System.Security.Cryptography;
 using System.Text;
 using PasswordVerificationResult = Microsoft.AspNetCore.Identity.PasswordVerificationResult;
+using CST350_Milestone.Services.DataAccess;
 
 namespace CST350_Milestone.Services.Business
 {
@@ -30,7 +31,7 @@ namespace CST350_Milestone.Services.Business
         {
             // Create the first user
             UserModel user1 = new UserModel();
-            user1.UserName = "Dorothy";
+            user1.Username = "Dorothy";
             user1.SetPassword("Nguyen");
             user1.FirstName = "Dao";
             user1.LastName = "Nguyen";
@@ -49,10 +50,11 @@ namespace CST350_Milestone.Services.Business
         /// <returns></returns>
         public int AddUser(UserModel user)
         {
-            // Set the user's Id to the next available number
-            user.Id = _users.Count + 1;
-            _users.Add(user);
-            return user.Id;
+            // Instantiate the DataAccess Layer to pass the data up and down the N-Layer Architecture
+            UserDAO userDAO = new UserDAO();
+
+            // Then return it back up to the controller
+            return userDAO.AddUser(user);
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace CST350_Milestone.Services.Business
             foreach (UserModel user in _users)
             {
                 // Get the id
-                if (user.UserName == username && VerifyPassword(password, user))
+                if (user.Username == username && VerifyPassword(password, user))
                 {
                     return user.Id;
                 }
@@ -114,7 +116,7 @@ namespace CST350_Milestone.Services.Business
         /// <returns></returns>
         public UserModel GetUserByUsername(string username)
         {
-            return _users.Find(x => x.UserName == username);
+            return _users.Find(x => x.Username == username);
         }
 
         /// <summary>
