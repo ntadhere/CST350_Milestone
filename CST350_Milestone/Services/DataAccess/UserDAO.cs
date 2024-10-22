@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace CST350_Milestone.Services.DataAccess
 {
-    public class UserDAO : IUserManager
+    public class UserDAO //: IUserManager
     {
         // Define the connection for MSQL
         private List<UserModel>? _users;
@@ -23,8 +23,6 @@ namespace CST350_Milestone.Services.DataAccess
         // set the string connection
         // String ineroplation
         static string connStr = $"server={serverName};user={username};database={dbName};port={port};password={password}";
-        // added this?
-        private int user;
 
         /// <summary>
         /// Add a new user
@@ -73,7 +71,7 @@ namespace CST350_Milestone.Services.DataAccess
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public int CheckCredentials(string username, string password)
+        public UserModel CheckCredentials(string username, string password)
         {
             string query = "";
 
@@ -94,7 +92,7 @@ namespace CST350_Milestone.Services.DataAccess
                         // ADD MORE!!!
                         if (reader.Read())
                         {
-                            UserModel userModel = new UserModel
+                            UserModel user = new UserModel
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 UserName = reader.GetString(reader.GetOrdinal("username")),
@@ -103,11 +101,11 @@ namespace CST350_Milestone.Services.DataAccess
                             };
                             return user;
                         }
-                        UserModel users2 = new UserModel
+                        UserModel user2 = new UserModel
                         {
                             Id = 0
                         };
-                        return 0;    // recheck
+                        return user2;
                     }
                 }
             }
