@@ -117,7 +117,7 @@ namespace CST350_Milestone.Services.DataAccess
         }
 
         /// <summary>
-        /// Get a user by Id and return it
+        /// Get all users and return the list
         /// </summary>
         /// <returns></returns>
         public List<UserModel> GetAllUsers()
