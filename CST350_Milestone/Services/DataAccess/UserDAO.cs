@@ -9,6 +9,7 @@ namespace CST350_Milestone.Services.DataAccess
     public class UserDAO : IUserManager
     {
         // Define the connection for MSQL
+        private List<UserModel>? _users;
         // change userauth?
         static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=UserAuth;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
@@ -22,6 +23,8 @@ namespace CST350_Milestone.Services.DataAccess
         // set the string connection
         // String ineroplation
         static string connStr = $"server={serverName};user={username};database={dbName};port={port};password={password}";
+        // added this?
+        private int user;
 
         /// <summary>
         /// Add a new user
@@ -64,9 +67,50 @@ namespace CST350_Milestone.Services.DataAccess
             }
         }
 
+        /// <summary>
+        /// This method will be used to verify a login attempt.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public int CheckCredentials(string username, string password)
         {
-            throw new NotImplementedException();
+            string query = "";
+
+            using (SqlConnection  connection = new SqlConnection(conn))
+            {
+                connection.Open();
+
+                query = "SELECT * FROM UserAccount WHERE Username = @Username AND MyPassword = @password";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue(@"Username", username);
+                    command.Parameters.AddWithValue(@"Password", password);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records were returned (meaning a user with
+                        // matching credentials exist)
+                        // ADD MORE!!!
+                        if (reader.Read())
+                        {
+                            UserModel userModel = new UserModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                UserName = reader.GetString(reader.GetOrdinal("username")),
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword")),
+                                // ADD THE REST!!!
+                            };
+                            return user;
+                        }
+                        UserModel users2 = new UserModel
+                        {
+                            Id = 0
+                        };
+                        return 0;    // recheck
+                    }
+                }
+            }
         }
 
         public void DeleteUser(UserModel user)
@@ -74,9 +118,50 @@ namespace CST350_Milestone.Services.DataAccess
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get a user by Id and return it
+        /// </summary>
+        /// <returns></returns>
         public List<UserModel> GetAllUsers()
         {
-            throw new NotImplementedException();
+            // Declare and Initialize
+            string query = "";
+
+            // Create a new transport list
+                List<UserModel > userList = new List<UserModel>();
+
+            // Step 1: create a connection to the db
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // open the connection to database
+                connection.Open();
+                // Define the SQL query to select all users
+                query = ("SELECT * FROM UserAccount");
+                // Step 2: Create a SQL Command
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Step 3: Execute the command and obtain a SQLDataReader object
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records are returned 
+                        while (reader.Read())
+                        {
+                            // Create a UserModel object to store the User's details
+                            UserModel user = new UserModel();
+
+                            // Populate the object
+                            // ADD THE REST!!!
+                            user.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                            user.UserName = reader["Username"].ToString();
+                            user.PasswordHash = reader["MyPassword"].ToString();
+                            
+                            // Add each user to the list
+                            userList.Add(user);
+                        }
+                    }
+                }
+            }
+                return userList;
         }
 
         public UserModel GetUserById(int id)
