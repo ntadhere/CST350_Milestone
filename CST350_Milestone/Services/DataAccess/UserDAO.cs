@@ -13,6 +13,11 @@
         static string dbName = "userauth";
         static string port = "3306";    // get correct port
 
+        // set the string connection
+        // String ineroplation
+        static string connStr = $"server={serverName};user={username};database={dbName};port={port};password={password}";
+
+
 
     }
 }
