@@ -8,11 +8,14 @@ namespace CST350_Milestone.Interface
         public List<UserModel> GetAllUsers();
         // Given Id number, find the matching user
         public UserModel GetUserById(int id);
+        // Given username, find the matching user
+
+        //public UserModel GetUserByUsername(string username);
         // Add a new user to the lish / db. Using during registration
         public int AddUser(UserModel user);
         // Remove the user who matches
-        public void DeleteUser(UserModel user);
+        public bool DeleteUser(int id);
         // Find the user with matching Id and replace it
-        public int CheckCredentials(string username, string password);
+        public UserModel CheckCredentials(string username, string password);
     }
 }

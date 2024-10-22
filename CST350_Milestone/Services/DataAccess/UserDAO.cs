@@ -18,7 +18,11 @@ namespace CST350_Milestone.Services.DataAccess
         // Declare and Initiallize
         string query = "";
 
-
+        /// <summary>
+        /// add the new user to the db
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public int AddUser(UserModel user)
         {
             int result = -1;
@@ -74,12 +78,119 @@ namespace CST350_Milestone.Services.DataAccess
             }
         } //End AddUser method
 
-        public int CheckCredentials(string username, string password)
+        public UserModel CheckCredentials(string username, string password)
+        {
+            // Open a new SQL connection using the connection string 
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // Open the connection to the db
+                connection.Open();
+                query = "SELECT * FROM Player WHERE Username = @Username AND MyPassword = @MyPassword";
+
+                // Create a SQL command object
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    //Add the username parameter
+                    command.Parameters.AddWithValue(@"Username", username);
+                    command.Parameters.AddWithValue(@"MyPassword", password);
+
+                    // Execute the command and object the SqlDataReader
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records are returned (meaning a user with matching credentials exists)
+                        if (reader.Read())
+                        {
+                            // Create a UserModel object to store the user's details from the database
+                            UserModel user = new UserModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Sex = reader.GetString(reader.GetOrdinal("Sex")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
+                            };
+                            // Return the user's ID if the credentials are valid
+                            return user;
+                        }
+                        // Return 0 if no matching user is found in the database
+                        // Create a UserModel object to store the user's details from the database
+                        UserModel user2 = new UserModel
+                        {
+                            Id = 0
+                        };
+                        return user2;
+                    }
+                }
+            }
+        } //End Check Credentials
+
+        /// <summary>
+        /// Get user by username and return it
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public UserModel GetUserByUsername(string username)
+        {
+            // Find the matching id number
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // Open the connection to the database
+                connection.Open();
+
+                // Define the SQL query using a parameter placeholder (@Username)
+                string query = "SELECT * FROM Player WHERE Username = @Username";
+
+                // Create a SQL command object using the query and open connection
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Add the username as a parameter to prevent SQL injection
+                    command.Parameters.AddWithValue("@Username", username);
+
+                    // Execute the command and obtain a SqlDataReader object to read the result set returned by the query
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records are returned (meaning a user with matching credentials exists)
+                        if (reader.Read())
+                        {
+                            // Create a UserModel object to store the user's details from the database
+                            UserModel user = new UserModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Sex = reader.GetString(reader.GetOrdinal("Sex")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
+                            };
+                            // Return the user's ID if the credential are valid
+                            return user;
+                        }
+                        // Return 0 if no matching user is found in the database
+                        // Create a UserModel object to store the user's details from the database
+                        UserModel user2 = new UserModel
+                        {
+                            Id = 0
+                        };
+                        return user2;
+                    }
+                }
+            }
+
+        }// End of GetUserByUsername
+
+        public void DeleteUser(UserModel user)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteUser(UserModel user)
+        public bool DeleteUser(int id)
         {
             throw new NotImplementedException();
         }

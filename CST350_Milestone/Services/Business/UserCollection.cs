@@ -58,26 +58,33 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// This method will bebe used to verify a login attempt
+        /// Verifies the login credentials by checking if the username and password match an existing user.
+        /// The password is hashed and compared to the stored hash.
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public int CheckCredentials(string username, string password)
+        /// <param name="username">The username of the user attempting to log in.</param>
+        /// <param name="password">The plain-text password to be verified.</param>
+        /// <returns>Returns the UserModel object if credentials are valid, otherwise returns null.</returns>
+        public UserModel CheckCredentials(string username, string password)
         {
-            //Given a username and password, find a matching user 
-            // Return the user's Id
-            // Iterate over the Usermodel
-            foreach (UserModel user in _users)
-            {
-                // Get the id
-                if (user.Username == username && VerifyPassword(password, user))
-                {
-                    return user.Id;
-                }
-            }
-            // No matches found. Invalid login 
-            return -1;
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Verify the username and password with the DataAccess layer and return the user details if valid.
+            return userDAO.CheckCredentials(username, password);
+        }
+
+        /// <summary>
+        /// Retrieves a user by their username from the database.
+        /// </summary>
+        /// <param name="username">The username of the user to retrieve.</param>
+        /// <returns>Returns the UserModel object representing the user with the specified username, or null if no user is found.</returns>
+        public UserModel GetUserByUsername(string username)
+        {
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the user by their username from the DataAccess layer and return it.
+            return userDAO.GetUserByUsername(username);
         }
 
         /// <summary>
@@ -109,15 +116,6 @@ namespace CST350_Milestone.Services.Business
             return _users.Find(x => x.Id == id);
         }
 
-        /// <summary>
-        /// Given an user, then find the user with matching name
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public UserModel GetUserByUsername(string username)
-        {
-            return _users.Find(x => x.Username == username);
-        }
 
         /// <summary>
         /// Find an existing user and update that user
@@ -158,6 +156,11 @@ namespace CST350_Milestone.Services.Business
                 return true;
             }
             return false;
+        }
+
+        public bool DeleteUser(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
