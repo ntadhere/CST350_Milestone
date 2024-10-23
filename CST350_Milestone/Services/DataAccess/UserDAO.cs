@@ -16,7 +16,7 @@ namespace CST350_Milestone.Services.DataAccess
         static string serverName = "localhost";
         static string username = "root";
         static string password = "root";
-        static string dbName = "milestoneuser";  // change name!
+        static string dbName = "milestoneuser";
         static string port = "3306";    // get correct port
 
         // set the string connection
@@ -45,6 +45,7 @@ namespace CST350_Milestone.Services.DataAccess
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     // Add parmeters to the command to safely pass user input values, avoiding SQL injection
+                    command.Parameters.AddWithValue("Id", user.Id);
                     command.Parameters.AddWithValue("@FirstName", user.FirstName);
                     command.Parameters.AddWithValue("@LastName", user.LastName);
                     command.Parameters.AddWithValue("@Age", user.Age);  // age integer
