@@ -32,7 +32,7 @@
             Sex = new List<SexViewModel>
             {
                 new SexViewModel{GenderOption = "Male", IsSelected = false},
-                new SexViewModel{GenderOption = "Felmale", IsSelected = false},
+                new SexViewModel{GenderOption = "Female", IsSelected = false},
                 new SexViewModel{GenderOption = "Prefer not to say", IsSelected = false},
             };
         }
