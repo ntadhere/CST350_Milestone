@@ -155,7 +155,18 @@ namespace CST350_Milestone.Services.DataAccess
                             UserModel user = new UserModel();
 
                             // Populate the object
-                            
+                            user.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                            user.FirstName = reader["FirstName"].ToString();
+                            user.LastName = reader["LastName"].ToString();
+                            user.Age = reader.GetInt32(reader.GetOrdinal("Age"));
+                            user.State = reader["State"].ToString();
+                            user.Email = reader["Email"].ToString();
+                            user.UserName = reader["Username"].ToString();
+                            user.PasswordHash = reader["MyPassword"].ToString();
+                            user.Sex = reader["Sex"].ToString();
+
+                            // Add each user to the list
+                            userList.Add(user);
                         }
                     }
                 }
