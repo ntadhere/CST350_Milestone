@@ -30,7 +30,7 @@ namespace CST350_Milestone.Controllers
             UserModel userData = users.GetUserByUsername(username);
 
             // We know the result will be 0 if the cred check failed
-            if (users.CheckCredentials(username, password).Id >= 0)
+            if (users.CheckCredentials(username, password).Id > 0)
             {
                 // Serialize the 'userData' object to JSON string
                 userJson = ServiceStack.Text.JsonSerializer.SerializeToString(userData);
@@ -125,13 +125,13 @@ namespace CST350_Milestone.Controllers
             {
                 // Success, redirect to success page or display success message
                 // After processing the registration, return the "Index" view to display the login page
-                return View("Index");
+                return View("RegisterSuccess", user);
             }
             else
             {
                 // Failure, inform the user to re-enter data
-                ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
-                return View("ProcessRegister"); // Return to the form and show an error message
+                //ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
+                return View("RegisterFailure"); // Return to the form and show an error message
             }
         }
     }
