@@ -82,6 +82,7 @@ namespace CST350_Milestone.Services.DataAccess
             {
                 connection.Open();
 
+                // do user name & password exist
                 query = "SELECT * FROM UserAccount WHERE Username = @Username AND MyPassword = @password";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -136,7 +137,7 @@ namespace CST350_Milestone.Services.DataAccess
                 // open the connection to database
                 connection.Open();
                 // Define the SQL query to select all users
-                query = ("SELECT * FROM UserAccount");
+                query = ("SELECT * FROM MilestoneUser");
                 // Step 2: Create a SQL Command
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
