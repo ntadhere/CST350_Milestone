@@ -1,5 +1,4 @@
-﻿//using MySql.Data.MySqlClient;
-using CST350_Milestone.Interface;
+﻿using CST350_Milestone.Interface;
 using CST350_Milestone.Models;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
@@ -10,7 +9,7 @@ namespace CST350_Milestone.Services.DataAccess
     {
         // Define the connection for MSQL
         private List<UserModel>? _users;
-        // change userauth?
+        // change userauth
         static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         // Define the connection string for MySQL
@@ -116,11 +115,6 @@ namespace CST350_Milestone.Services.DataAccess
                     }
                 }
             }
-        }
-
-        public void DeleteUser(UserModel user)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
