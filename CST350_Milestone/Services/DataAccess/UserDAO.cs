@@ -28,24 +28,38 @@ namespace CST350_Milestone.Services.DataAccess
             int result = -1;
 
             // Establish a new SQL connection using the provided connection string.
-            // This connection uses SQL Server Authentication (username and password).
             using (SqlConnection connection = new SqlConnection(conn))
             {
-                // Open the connection to the database.
                 connection.Open();
 
-                // Define the SQL query to insert a new user into the UserAccount table.
-                // The query inserts values for Username, MyPassword (hashed password), and GroupName.
-                // SELECT SCOPE_IDENTITY() is used to retrieve the ID of the newly inserted record.
-                string query = @"INSERT INTO Player (FirstName, LastName, Sex, Age, State, Email, Username, MyPassword)
-                         VALUES (@FirstName, @LastName, @Sex, @Age, @State, @Email, @Username, @MyPassword);
-                         SELECT SCOPE_IDENTITY();";
+                // Step 1: Check if the user already exists (based on Username or Email).
+                string checkQuery = @"SELECT COUNT(*) FROM Player WHERE Username = @Username OR Email = @Email";
 
-                // Create a SQL command object, passing the query and the open connection.
+                using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
+                {
+                    // Add parameters for Username and Email to avoid SQL injection
+                    checkCommand.Parameters.AddWithValue("@Username", user.Username);
+                    checkCommand.Parameters.AddWithValue("@Email", user.Email);
+
+                    // Execute the query and get the count of matching records
+                    int userCount = (int)checkCommand.ExecuteScalar();
+
+                    // If userCount > 0, the user already exists, so return 0 or an error code
+                    if (userCount > 0)
+                    {
+                        Console.WriteLine("A user with this Username or Email already exists.");
+                        return 0; // Return 0 to indicate that the user already exists
+                    }
+                }
+
+                // Step 2: If the user does not exist, proceed with the insertion
+                string query = @"INSERT INTO Player (FirstName, LastName, Sex, Age, State, Email, Username, MyPassword)
+                  VALUES (@FirstName, @LastName, @Sex, @Age, @State, @Email, @Username, @MyPassword);
+                  SELECT SCOPE_IDENTITY();";
+
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    // Add parameters to the command to securely pass the user input (Username, PasswordHash, and Groups).
-                    // This prevents SQL injection by ensuring the input values are safely escaped.
+                    // Add parameters to securely pass user input values
                     command.Parameters.AddWithValue("@FirstName", user.FirstName);
                     command.Parameters.AddWithValue("@LastName", user.LastName);
                     command.Parameters.AddWithValue("@Sex", user.Sex);
@@ -55,28 +69,24 @@ namespace CST350_Milestone.Services.DataAccess
                     command.Parameters.AddWithValue("@Username", user.Username);
                     command.Parameters.AddWithValue("@MyPassword", user.PasswordHash);
 
-                    // Execute the query and retrieve the identity value (ID) of the newly inserted user using ExecuteScalar.
+                    // Execute the query and retrieve the newly inserted user ID using ExecuteScalar
                     object resultObj = command.ExecuteScalar();
 
-                    // Check if the result is not null and can be successfully parsed to an integer.
-                    // This indicates the ID of the newly inserted user.
+                    // Check if the result is not null and can be successfully parsed to an integer (the new user's ID)
                     if (resultObj != null && int.TryParse(resultObj.ToString(), out result))
                     {
-                        // Return the newly inserted user's ID.
-                        return result;
+                        return result; // Return the newly inserted user's ID
                     }
                     else
                     {
-                        // If the ID retrieval fails, inform the user and suggest re-entering the details.
+                        // If ID retrieval fails, inform the user
                         Console.WriteLine("Failed to retrieve the inserted ID. Please re-enter the details.");
-
-                        // Return 0 to indicate failure to retrieve the inserted ID.
-                        // You can handle this case differently depending on your application's error handling approach.
-                        return 0;
+                        return 0; // Return 0 to indicate failure
                     }
                 }
             }
-        } //End AddUser method
+        } // End AddUser method
+
 
         public UserModel CheckCredentials(string username, string password)
         {

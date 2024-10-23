@@ -130,8 +130,8 @@ namespace CST350_Milestone.Controllers
             else
             {
                 // Failure, inform the user to re-enter data
-                ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
-                return View("ProcessRegister"); // Return to the form and show an error message
+                //ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
+                return View("RegisterFailure"); // Return to the form and show an error message
             }
         }
     }
