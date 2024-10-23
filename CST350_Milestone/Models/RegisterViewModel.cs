@@ -12,8 +12,7 @@ namespace CST350_Milestone.Models
     public class RegisterViewModel
     {
         [Required(ErrorMessage = "First name is required.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain letters.")]
-        public string FirstName { get; set; }
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "First name can only contain letters and spaces.")] public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last name is required.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Last name can only contain letters.")]
@@ -37,8 +36,8 @@ namespace CST350_Milestone.Models
         // Password must be at least 8 characters long, contain at least one uppercase letter and one special character
         [Required(ErrorMessage = "Password is required.")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long.")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*[!@#$%^&*]).+$",
-    ErrorMessage = "Password must have:<br/>- At least 8 characters long. <br/>- At least one uppercase letter<br />- At least one symbol (!@#$%^&*)")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[!@#$%^&?*])(?=.*\d).{8,}$",
+ErrorMessage = "Password must have:<br/>- At least 8 characters long.<br/>- At least one uppercase letter.<br/>- At least one symbol (?!@#$%^&*).")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
