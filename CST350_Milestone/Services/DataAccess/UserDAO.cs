@@ -11,13 +11,13 @@ namespace CST350_Milestone.Services.DataAccess
         // Define the connection for MSQL
         private List<UserModel>? _users;
         // change userauth?
-        static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=UserAuth;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         // Define the connection string for MySQL
         static string serverName = "localhost";
         static string username = "root";
         static string password = "root";
-        static string dbName = "userauth";  // change name!
+        static string dbName = "milestoneuser";  // change name!
         static string port = "3306";    // get correct port
 
         // set the string connection
