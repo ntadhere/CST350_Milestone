@@ -17,7 +17,7 @@ namespace CST350_Milestone.Services.DataAccess
         static string serverName = "localhost";
         static string username = "root";
         static string password = "root";
-        static string dbName = "userauth";
+        static string dbName = "userauth";  // change name!
         static string port = "3306";    // get correct port
 
         // set the string connection
@@ -40,16 +40,19 @@ namespace CST350_Milestone.Services.DataAccess
                 // open the connection to the database
                 connection.Open();
                 // Define the SQL querry with parameter placeholders to prevent SQL injection attacks
-                query = "SELECT * FROM UserAccount WHERE Username = @Username AND MyPassworf = @password";
+                query = "SELECT * FROM UserAccount WHERE Username = @Username AND MyPassword = @password";
 
                 // Create a SQL command object using the query and open connection
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     // Add parmeters to the command to safely pass user input values, avoiding SQL injection
+                    command.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    command.Parameters.AddWithValue("@LastName", user.LastName);
+                    command.Parameters.AddWithValue("@Age", user.Age);  // age integer
+                    command.Parameters.AddWithValue("@State", user.State);
+                    command.Parameters.AddWithValue("@Groups", user.Email);
                     command.Parameters.AddWithValue("@Username",  user.UserName);
                     command.Parameters.AddWithValue("@Password", user.PasswordHash);
-                    command.Parameters.AddWithValue("@Groups", user.Email);
-                   // command.Parameters.AddWithValue("@")
 
                    // Execute the query and retrieve the new inserted ID using ExecuteScalar
                    // which returns the first column of the first row in the result set
@@ -89,15 +92,19 @@ namespace CST350_Milestone.Services.DataAccess
                     {
                         // Check if any records were returned (meaning a user with
                         // matching credentials exist)
-                        // ADD MORE!!!
                         if (reader.Read())
                         {
                             UserModel user = new UserModel
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
                                 UserName = reader.GetString(reader.GetOrdinal("username")),
                                 PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword")),
-                                // ADD THE REST!!!
+                                Sex = reader.GetString(reader.GetOrdinal("Sex"))
                             };
                             return user;
                         }
@@ -148,13 +155,7 @@ namespace CST350_Milestone.Services.DataAccess
                             UserModel user = new UserModel();
 
                             // Populate the object
-                            // ADD THE REST!!!
-                            user.Id = reader.GetInt32(reader.GetOrdinal("Id"));
-                            user.UserName = reader["Username"].ToString();
-                            user.PasswordHash = reader["MyPassword"].ToString();
                             
-                            // Add each user to the list
-                            userList.Add(user);
                         }
                     }
                 }
@@ -212,7 +213,6 @@ namespace CST350_Milestone.Services.DataAccess
                 }
             }
             // End get user by Id
-
         }
     }
 }
