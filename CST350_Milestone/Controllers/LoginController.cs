@@ -125,7 +125,7 @@ namespace CST350_Milestone.Controllers
             {
                 // Success, redirect to success page or display success message
                 // After processing the registration, return the "Index" view to display the login page
-                return View("Index");
+                return View("RegisterSuccess", user);
             }
             else
             {
