@@ -118,56 +118,5 @@ namespace CST350_Milestone.Services.DataAccess
                 }
             }
         }
-
-        /// <summary>
-        /// Get all users and return the list
-        /// </summary>
-        /// <returns></returns>
-        public List<UserModel> GetAllUsers()
-        {
-            // Declare and Initialize
-            string query = "";
-
-            // Create a new transport list
-                List<UserModel > userList = new List<UserModel>();
-
-            // Step 1: create a connection to the db
-            using (SqlConnection connection = new SqlConnection(conn))
-            {
-                // open the connection to database
-                connection.Open();
-                // Define the SQL query to select all users
-                query = ("SELECT * FROM MilestoneUser");
-                // Step 2: Create a SQL Command
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    // Step 3: Execute the command and obtain a SQLDataReader object
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        // Check if any records are returned 
-                        while (reader.Read())
-                        {
-                            // Create a UserModel object to store the User's details
-                            UserModel user = new UserModel();
-
-                            // Populate the object
-                            user.Id = reader.GetInt32(reader.GetOrdinal("Id"));
-                            user.FirstName = reader["FirstName"].ToString();
-                            user.LastName = reader["LastName"].ToString();
-                            user.Age = reader.GetInt32(reader.GetOrdinal("Age"));
-                            user.State = reader["State"].ToString();
-                            user.Email = reader["Email"].ToString();
-                            user.UserName = reader["Username"].ToString();
-                            user.PasswordHash = reader["MyPassword"].ToString();
-                            user.Sex = reader["Sex"].ToString();
-
-                            // Add each user to the list
-                            userList.Add(user);
-                        }
-                    }
-                }
-            }
-                return userList;
-        }
     }
 }
