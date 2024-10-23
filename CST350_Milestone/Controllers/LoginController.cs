@@ -30,7 +30,7 @@ namespace CST350_Milestone.Controllers
             UserModel userData = users.GetUserByUsername(username);
 
             // We know the result will be 0 if the cred check failed
-            if (users.CheckCredentials(username, password).Id >= 0)
+            if (users.CheckCredentials(username, password).Id > 0)
             {
                 // Serialize the 'userData' object to JSON string
                 userJson = ServiceStack.Text.JsonSerializer.SerializeToString(userData);

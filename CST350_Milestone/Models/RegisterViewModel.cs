@@ -1,26 +1,50 @@
-﻿namespace CST350_Milestone.Models
+﻿using System.ComponentModel.DataAnnotations; // Required for data annotations
+using System.Collections.Generic;
+
+namespace CST350_Milestone.Models
 {
     public class SexViewModel
     {
         public bool IsSelected { get; set; }
         public string GenderOption { get; set; }
     }
+
     public class RegisterViewModel
     {
-
-        // Properties for Entry Screen
+        [Required(ErrorMessage = "First name is required.")]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain letters.")]
         public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required.")]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Last name can only contain letters.")]
         public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Age is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Age must be greater than 0.")]
         public int Age { get; set; }
+
+        [Required(ErrorMessage = "State is required.")]
         public string State { get; set; }
+
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "Username is required.")]
         public string UserName { get; set; }
+
+        // Password must be at least 8 characters long
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
+
         public List<SexViewModel> Sex { get; set; }
 
+        // Constructor
         public RegisterViewModel()
         {
-            // Declare and Init
+            // Initialize properties with default values
             FirstName = "";
             LastName = "";
             Age = 0;
@@ -28,12 +52,13 @@
             Email = "";
             UserName = "";
             Password = "";
-            // Create the selection we want for checkboxes
+
+            // Initialize gender selection checkboxes
             Sex = new List<SexViewModel>
             {
                 new SexViewModel{GenderOption = "Male", IsSelected = false},
-                new SexViewModel{GenderOption = "Felmale", IsSelected = false},
-                new SexViewModel{GenderOption = "Prefer not to say", IsSelected = false},
+                new SexViewModel{GenderOption = "Female", IsSelected = false},
+                new SexViewModel{GenderOption = "Prefer not to say", IsSelected = false}
             };
         }
     }
