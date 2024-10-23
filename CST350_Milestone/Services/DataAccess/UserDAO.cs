@@ -209,9 +209,14 @@ namespace CST350_Milestone.Services.DataAccess
                             UserModel user = new UserModel
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
                                 UserName = reader.GetString(reader.GetOrdinal("username")),
-                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
-                                // ADD THE REST!!!!
+                                PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword")),
+                                Sex = reader.GetString(reader.GetOrdinal("Sex"))
                             };
                             return user;
                         }
