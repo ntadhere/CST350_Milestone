@@ -17,19 +17,21 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Sex" class="control-label"></label> <br />
+                <label asp-for="SelectedSex" class="control-label"></label> <br />
 
-                <!-- Generate a list of radio buttons with corresponding labels -->
-                @for (int i = 0; i < Model.Sex.Count; i++)
+                <!-- Loop through the gender options and generate radio buttons -->
+                @for (int i = 0; i < Model.SexOptions.Count; i++)
                 {
-                    // Generate radio buttons for gender selection
-                    <input type="radio" name="SelectedSex" value="@Model.Sex[i].GenderOption" asp-for="Sex[i].IsSelected" />
-                    <input type="hidden" asp-for="Sex[i].GenderOption" />
+                    <input type="radio" id="sexOption_@i" name="SelectedSex" value="@Model.SexOptions[i]"
+                    @(Model.SelectedSex == Model.SexOptions[i] ? "checked" : "") />
+                    <label for="sexOption_@i">@Model.SexOptions[i]</label>
 
-                    // Label after radio button
-                    <label>@Model.Sex[i].GenderOption</label>
+                    <br />
                 }
+
+                <span asp-validation-for="SelectedSex" class="text-danger"></span>
             </div>
+
 
             <div class="form-group">
                 <label asp-for="Age" class="control-label"></label>
