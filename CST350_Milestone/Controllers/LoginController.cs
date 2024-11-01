@@ -45,15 +45,32 @@ namespace CST350_Milestone.Controllers
             return View("LoginFailure");
 
         }
-        /// <summary>
-        /// The annotation "SessionCheckFilter" triggers a request to run the filter
-        /// </summary>
-        /// <returns></returns>
+
+
         [SessionCheckFilter]
         public IActionResult StartGame()
         {
+            // Display form to input Size and Difficulty
             return View("StartGame");
         }
+
+        [HttpPost]
+        [SessionCheckFilter]
+        public IActionResult StartGame(int size, int difficulty)
+        {
+            if (ModelState.IsValid)
+            {
+                // Save Size and Difficulty to session
+                HttpContext.Session.SetInt32("BoardSize", size);
+                HttpContext.Session.SetInt32("Difficulty", difficulty);
+
+                // Redirect to the game page
+                return RedirectToAction("Index", "Game");
+            }
+
+            return View();
+        }
+
 
 
         /// <summary>

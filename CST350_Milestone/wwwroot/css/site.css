@@ -70,3 +70,26 @@ div .row {
     border: 0.2rem dashed #6B71FF;
     border-radius: 1.5rem !important;
 }
+
+/*.button-zone
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+.game-button
+{
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid #6B71FF;
+    border-radius: 0.5rem;
+  
+}
+.line-break
+{
+    /* Sub property of the flexbox to specify the initial size of the flex item*/
+    flex-basis: 100%;
+    /* Specify the height of an element*/
+    height: 0;
+}

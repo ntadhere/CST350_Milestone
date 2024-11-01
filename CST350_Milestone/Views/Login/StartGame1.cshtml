@@ -14,7 +14,7 @@
             <div class="form-group">
                 <label asp-for="Difficulty" class="control-label"></label>
                 <input asp-for="Difficulty" class="form-control" />
-                <span class="text-danger">* Number of bombs should less than number of squares on board</span> <br />
+                <span class="text-danger">* Number of bombs should less than number of squares on board</span> <br/>
                 <span asp-validation-for="Difficulty" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -29,7 +29,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
