@@ -6,19 +6,14 @@
 
 
 @* Surround the entire board with a form that can be submitted *@
-<form action="/" method="post">
-    <div class="button-zone">
-        @* Iterate over the buttons and display them*@
+
+<form action="/" method="post" class="game-zone">
+    <div class="button-zone" style="--button-count: @Model.Size;">
+        @* Iterate over the buttons and display them *@
         @for (int i = 0; i < Model.TheGrid.Length; i++)
         {
-            // Start a new line ever five elements
-            if (i % Model.Size == 0)
-            {
-                // Add an HTML Page break
-                <div class="line-break"></div>
-            }
-            @* Create a section arround the game board and them make each button active*@
-            <button class="btn game-button" type="submit" name="buttonNumber" asp-controller="Button" asp-action="HandleButtonClick">
+            <button class="game-button" type="submit" name="buttonNumber" asp-controller="Button" asp-action="HandleButtonClick">
+                <!-- Button Content -->
             </button>
         }
     </div>

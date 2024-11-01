@@ -71,12 +71,22 @@ div .row {
     border-radius: 1.5rem !important;
 }
 
-/*.button-zone
+/*.game-zone
 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}*/
+    width: 60%;
+    display: flex;*/ /* Corrected spelling here */
+    /*justify-content: center;*/ /* Center horizontally */
+    /*align-items: center;*/ /* Center vertically */
+    /*align-content: center;
+    margin: 0 auto;*/ /* Center game-zone itself if needed */
+/*}
+
+.button-zone
+{
+    width: 80%;
+    text-align: center;
+}
+
 
 .game-button
 {
@@ -84,12 +94,43 @@ div .row {
     height: 3rem;
     border: 2px solid #6B71FF;
     border-radius: 0.5rem;
-  
+    background-color: #6B71FF;
 }
 .line-break
-{
+{*/
     /* Sub property of the flexbox to specify the initial size of the flex item*/
-    flex-basis: 100%;
+    /*flex-basis: 100%;*/
     /* Specify the height of an element*/
-    height: 0;
+    /*height: 0;
+}*/
+
+
+.game-zone
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
 }
+
+.button-zone
+{
+    display: grid;
+    grid-template-columns: repeat(var(--button-count), 1fr); /* Creates columns based on button count */
+    gap: 1px; /* Adjust spacing between buttons if needed */
+    width: 100%;
+    max-width: 40%; /* Adjust max-width to control the overall size of button-zone */
+}
+
+.game-button
+{
+    width: 100%; /* Each button takes full width of its grid cell */
+    aspect-ratio: 1 / 1; /* Keeps button square */
+    box-sizing: border-box;
+    padding: 0; /* Ensures no extra padding affects width */
+    border: 2px solid #6B71FF;
+    border-radius: 1px;
+    background-color: #6B71FF;
+}
+
