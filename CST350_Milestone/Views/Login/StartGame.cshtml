@@ -1,31 +1,33 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@using ServiceStack.Text
+﻿@model CST350_Milestone.Models.BoardModel
 
-@{
-    // Begin Razor Code Block
-    <h1> Start MINESWEEPER GAME</h1>
-    <p>Welcome player</p>
+<h1>Start Game</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="StartGame">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Size" class="control-label"></label>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Difficulty" class="control-label"></label>
+                <input asp-for="Difficulty" class="form-control" />
+                <p class="text-danger">*number of bombs should less than number of squares on board</p>
+                <span asp-validation-for="Difficulty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Play" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
-    // Retrieve the "User" string from the session storage
-    // Store it in the 'user' variable
-    // It could be null if no user is logged in
-    string? user = Context.Session.GetString("User");
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
-    // Serialize the 'user' string to JSON format using the ServiceStack.Text.JsonSerializer
-    var userString = ServiceStack.Text.JsonSerializer.SerializeToString(user);
-
-    // Check if the 'user' variable is null or an empty string
-    if (string.IsNullOrEmpty(user))
-    {
-        <p>Your are not logged in...</p>
-    }
-    else
-    {
-        <p>You are logged in as @userString</p>
-
-        // print Formatted Json
-        <pre>@user</pre>
-    }
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

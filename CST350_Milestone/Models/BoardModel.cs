@@ -4,8 +4,10 @@
 // Milestone 2
 // This is my own word
 
+using CST350_Milestone.Filter;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +16,28 @@ namespace CST350_Milestone.Models
 {
     public class BoardModel
     {
-        // the board is always square.
-        public int Size { get; set; }
+        [Required]
+        [Display(Name = "Board game size")]
+        public int Size { get; set; }               // the board is always square.
+
+        [Required]
+        [Display(Name = "Number of bombs")]
+        public int Difficulty { get; set; }      // A percentage of cells that will be set to "live" status
+
         // 2d array of Cell objects
         public CellModel[,] TheGrid { get; set; }
-        // A percentage of cells that will be set to "live" status
-        public int Difficulty { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            int maxDifficulty = Size * Size - 1;
+
+            if (Difficulty < 0 || Difficulty > maxDifficulty)
+            {
+                yield return new ValidationResult(
+                    $"Difficulty must be between 0 and {maxDifficulty}.",
+                    new[] { nameof(Difficulty) });
+            }
+        }
 
         // constructor
         public BoardModel(int size)

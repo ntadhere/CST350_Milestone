@@ -1,5 +1,6 @@
-html {
-  font-size: 14px;
+html
+{
+    font-size: 14px;
 }
 
 /* Updating font for whole webpage*/
@@ -24,7 +25,8 @@ html {
   min-height: 100%;
 }
 
-body {
+body
+{
     margin-bottom: 60px;
 }
 
@@ -44,14 +46,17 @@ body {
     }
 
 
-h1 {
+h1
+{
     font-family: Trust;
     color: #6B71FF;
-    text-align:center;
+    text-align: center;
 }
 
 .btn {
     margin-top: 1vw;
+    border-radius: 1.5rem;
+    padding: 0.375rem 1.5rem;
 }
 
 /*align the register and login form to center*/
@@ -61,6 +66,7 @@ div .row {
 
 /*border for the input box in general*/
 .form-control {
-    border: 0.1rem dashed #6B71FF;
+    background-color: transparent;
+    border: 0.2rem dashed #6B71FF;
     border-radius: 1.5rem !important;
 }
