@@ -130,7 +130,16 @@ div .row {
     box-sizing: border-box;
     padding: 0; /* Ensures no extra padding affects width */
     border: 2px solid #6B71FF;
-    border-radius: 1px;
+    border-radius: 4px;
     background-color: #6B71FF;
+}
+
+.button-label {
+    color: white;
+}
+
+.hidden-label
+{
+    visibility: hidden;
 }
 
