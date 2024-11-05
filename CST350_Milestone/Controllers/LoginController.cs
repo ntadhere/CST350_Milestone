@@ -64,8 +64,12 @@ namespace CST350_Milestone.Controllers
                 HttpContext.Session.SetInt32("BoardSize", size);
                 HttpContext.Session.SetInt32("Difficulty", difficulty);
 
-                // Redirect to the game page
-                return RedirectToAction("Index", "Game");
+                // Generate a unique game session ID and store it in session
+                var gameSessionId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("GameSessionId", gameSessionId);
+
+                // Redirect to the game page with the session-based ID
+                return RedirectToAction("Index", "Game", new { gameSessionId });
             }
 
             return View();
