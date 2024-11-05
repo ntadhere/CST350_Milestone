@@ -29,6 +29,7 @@ namespace CST350_Milestone.Controllers
 
                 // Set up live neighbors based on the retrieved difficulty
                 board.setupLiveNeighbors(difficulty.Value);
+                board.calculateLiveNeighbors();
 
                 return View("Index", board);
             }

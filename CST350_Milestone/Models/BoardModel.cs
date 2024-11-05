@@ -73,6 +73,23 @@ namespace CST350_Milestone.Models
             }
         }
 
+        public int getSquareOnBoard(int order)
+        {
+            int temp = 0;
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (temp == order)
+                    {
+                        return TheGrid[i, j].NumNeighbors;
+                    }
+                    temp++;
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// this method helps to check the win condition for the game.
         /// </summary>
