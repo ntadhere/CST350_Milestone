@@ -4,6 +4,7 @@ using CST350_Milestone.Models;
 using System.Security.Cryptography;
 using System.Text;
 using PasswordVerificationResult = Microsoft.AspNetCore.Identity.PasswordVerificationResult;
+using CST350_Milestone.Services.DataAccess;
 
 namespace CST350_Milestone.Services.Business
 {
@@ -20,7 +21,7 @@ namespace CST350_Milestone.Services.Business
         {
             _users = new List<UserModel>();
             // Create some user account
-            GenerateUserData();
+            // GenerateUserData();
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace CST350_Milestone.Services.Business
         {
             // Create the first user
             UserModel user1 = new UserModel();
-            user1.UserName = "Dorothy";
+            user1.Username = "Dorothy";
             user1.SetPassword("Nguyen");
             user1.FirstName = "Dao";
             user1.LastName = "Nguyen";
@@ -49,73 +50,84 @@ namespace CST350_Milestone.Services.Business
         /// <returns></returns>
         public int AddUser(UserModel user)
         {
-            // Set the user's Id to the next available number
-            user.Id = _users.Count + 1;
-            _users.Add(user);
-            return user.Id;
+            // Instantiate the DataAccess Layer to pass the data up and down the N-Layer Architecture
+            UserDAO userDAO = new UserDAO();
+
+            // Then return it back up to the controller
+            return userDAO.AddUser(user);
         }
 
         /// <summary>
-        /// This method will bebe used to verify a login attempt
+        /// Verifies the login credentials by checking if the username and password match an existing user.
+        /// The password is hashed and compared to the stored hash.
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public int CheckCredentials(string username, string password)
+        /// <param name="username">The username of the user attempting to log in.</param>
+        /// <param name="password">The plain-text password to be verified.</param>
+        /// <returns>Returns the UserModel object if credentials are valid, otherwise returns null.</returns>
+        public UserModel CheckCredentials(string username, string password)
         {
-            //Given a username and password, find a matching user 
-            // Return the user's Id
-            // Iterate over the Usermodel
-            foreach (UserModel user in _users)
-            {
-                // Get the id
-                if (user.UserName == username && VerifyPassword(password, user))
-                {
-                    return user.Id;
-                }
-            }
-            // No matches found. Invalid login 
-            return -1;
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Verify the username and password with the DataAccess layer and return the user details if valid.
+            return userDAO.CheckCredentials(username, password);
         }
 
         /// <summary>
-        /// Method to delete a user
+        /// Deletes a user from the database by their ID.
         /// </summary>
-        /// <param name="user"></param>
-        public void DeleteUser(UserModel user)
+        /// <param name="id">The unique identifier (ID) of the user to be deleted.</param>
+        /// <returns>Returns true if the user was successfully deleted, otherwise false.</returns>
+        public bool DeleteUser(int id)
         {
-            _users.Remove(user);
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Pass the user ID to the DataAccess layer for deletion and return the result.
+            return userDAO.DeleteUser(id);
         }
 
         /// <summary>
-        /// Return all users in list
+        /// Retrieves all users from the database as a list of UserModel objects.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns a list of all UserModel objects representing the users in the database.</returns>
         public List<UserModel> GetAllUsers()
         {
-            return _users;
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the list of all users from the DataAccess layer and return it.
+            return userDAO.GetAllUsers();
         }
 
         /// <summary>
-        /// Given an id Number, Find the user with the matching id
+        /// Retrieves a user by their ID from the database.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">The unique identifier (ID) of the user to retrieve.</param>
+        /// <returns>Returns the UserModel object representing the user with the specified ID, or null if no user is found.</returns>
         public UserModel GetUserById(int id)
         {
-            // Iterate through the model and find the user
-            return _users.Find(x => x.Id == id);
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the user by their ID from the DataAccess layer and return it.
+            return userDAO.GetUserById(id);
         }
 
         /// <summary>
-        /// Given an user, then find the user with matching name
+        /// Retrieves a user by their username from the database.
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
+        /// <param name="username">The username of the user to retrieve.</param>
+        /// <returns>Returns the UserModel object representing the user with the specified username, or null if no user is found.</returns>
         public UserModel GetUserByUsername(string username)
         {
-            return _users.Find(x => x.UserName == username);
+            // Instantiate the DataAccess Layer to handle database operations.
+            UserDAO userDAO = new UserDAO();
+
+            // Retrieve the user by their username from the DataAccess layer and return it.
+            return userDAO.GetUserByUsername(username);
         }
+
 
         /// <summary>
         /// Find an existing user and update that user
