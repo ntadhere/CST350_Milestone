@@ -1,0 +1,41 @@
+﻿@model CST350_Milestone.Services.Business.GameCollection
+
+@{
+    // Store image names in an array for more efficient code
+    // string[] imageNames = { "bomb.png" };
+    int totalCel = Model.Board.Size * Model.Board.Size;
+}
+
+
+@* Surround the entire board with a form that can be submitted *@
+
+<h1>LET'S PLAY</h1>
+
+
+
+<form action="/" method="post" class="game-zone">
+    <div class="button-zone" style="--button-count: @Model.Board.Size;">
+        @* Iterate over the buttons and display them *@
+        @for (int i = 0; i < totalCel; i++)
+        {
+            
+            <button class="game-button" type="submit" name="buttonNumber" asp-controller="Button" asp-action="HandleButtonClick" onclick="showLabel(this)">
+                <!-- Add a label below each button-->
+                
+
+                @if (Model.getSquareOnBoard(i) == 9)
+                {
+                    <img class="button-label hidden-label" src="~/img/bomb.png" />
+                }
+                else
+                {
+                    <div class="button-label hidden-label">
+                        @Model.getSquareOnBoard(i)
+                    </div>
+                }
+                 
+            </button>
+           
+        }
+    </div>
+</form>

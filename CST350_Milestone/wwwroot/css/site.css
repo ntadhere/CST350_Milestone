@@ -1,5 +1,6 @@
-html {
-  font-size: 14px;
+html
+{
+    font-size: 14px;
 }
 
 /* Updating font for whole webpage*/
@@ -24,7 +25,8 @@ html {
   min-height: 100%;
 }
 
-body {
+body
+{
     margin-bottom: 60px;
 }
 
@@ -44,14 +46,17 @@ body {
     }
 
 
-h1 {
+h1
+{
     font-family: Trust;
     color: #6B71FF;
-    text-align:center;
+    text-align: center;
 }
 
 .btn {
     margin-top: 1vw;
+    border-radius: 1.5rem;
+    padding: 0.375rem 1.5rem;
 }
 
 /*align the register and login form to center*/
@@ -61,6 +66,91 @@ div .row {
 
 /*border for the input box in general*/
 .form-control {
-    border: 0.1rem dashed #6B71FF;
+    background-color: transparent;
+    border: 0.2rem dashed #6B71FF;
     border-radius: 1.5rem !important;
 }
+
+/*.game-zone
+{
+    width: 60%;
+    display: flex;*/ /* Corrected spelling here */
+    /*justify-content: center;*/ /* Center horizontally */
+    /*align-items: center;*/ /* Center vertically */
+    /*align-content: center;
+    margin: 0 auto;*/ /* Center game-zone itself if needed */
+/*}
+
+.button-zone
+{
+    width: 80%;
+    text-align: center;
+}
+
+
+.game-button
+{
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid #6B71FF;
+    border-radius: 0.5rem;
+    background-color: #6B71FF;
+}
+.line-break
+{*/
+    /* Sub property of the flexbox to specify the initial size of the flex item*/
+    /*flex-basis: 100%;*/
+    /* Specify the height of an element*/
+    /*height: 0;
+}*/
+
+
+.game-zone
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.button-zone
+{
+    display: grid;
+    grid-template-columns: repeat(var(--button-count), 1fr); /* Creates columns based on button count */
+    gap: 1px; /* Adjust spacing between buttons if needed */
+    width: 100%;
+    max-width: 40%; /* Adjust max-width to control the overall size of button-zone */
+}
+
+.game-button
+{
+    width: 100%; /* Each button takes full width of its grid cell */
+    aspect-ratio: 1 / 1; /* Keeps button square */
+    box-sizing: border-box;
+    padding: 0; /* Ensures no extra padding affects width */
+    border: 2px solid #6B71FF;
+    border-radius: 4px;
+    background-color: #6B71FF;
+}
+
+.button-label {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.hidden-label
+{
+    display: none;
+}
+
+.game-button-image
+{
+    display: none; /* Hidden by default */
+}
+
+.visible-image
+{
+    display: inline; /* Show image if bomb */
+}
+

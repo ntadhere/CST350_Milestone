@@ -22,7 +22,7 @@
                 <!-- Generate a list of radio buttons with corresponding labels -->
                 @for (int i = 0; i < Model.Sex.Count; i++)
                 {
-                    // Generate radio buttons for gender selection
+                // Generate radio buttons for gender selection
                     <input type="radio" name="SelectedSex" value="@Model.Sex[i].GenderOption" asp-for="Sex[i].IsSelected" />
                     <input type="hidden" asp-for="Sex[i].GenderOption" />
 
@@ -30,6 +30,7 @@
                     <label>@Model.Sex[i].GenderOption</label>
                 }
             </div>
+
 
             <div class="form-group">
                 <label asp-for="Age" class="control-label"></label>
