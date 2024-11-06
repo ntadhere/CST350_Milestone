@@ -89,7 +89,7 @@ namespace CST350_Milestone.Controllers
             UserModel user = new UserModel();
 
             // Set the username, firstname, lastname, email, state, age of the new user from the RegisterViewModel passed from the form 
-            user.Username = registerViewModel.UserName;
+            user.UserName = registerViewModel.UserName;
             user.PasswordHash = registerViewModel.Password;
             user.FirstName = registerViewModel.FirstName;
             user.LastName = registerViewModel.LastName;
