@@ -1,11 +1,14 @@
 ﻿using CST350_Milestone.Models;
+using CST350_Milestone.Services.Business;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
 
 namespace CST350_Milestone.Controllers
 {
+
     public class GameController : Controller
     {
+        static GameCollection game = new GameCollection();
 
         public IActionResult Index()
         {
@@ -25,13 +28,13 @@ namespace CST350_Milestone.Controllers
             if (boardSize.HasValue && difficulty.HasValue)
             {
                 // Initialize the board with the retrieved size
-                BoardModel board = new BoardModel(boardSize.Value);
+                game.generateBoard(boardSize.Value);
 
                 // Set up live neighbors based on the retrieved difficulty
-                board.setupLiveNeighbors(difficulty.Value);
-                board.calculateLiveNeighbors();
+                game.setupLiveNeighbors(difficulty.Value);
+                game.calculateLiveNeighbors();
 
-                return View("Index", board);
+                return View("Index", game);
             }
             return View("AccessDenied");
         }
