@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace CST350_Milestone.Services.DataAccess
 {
-    public class UserDAO : IUserManager
+    public class UserDAO //: IUserManager
     {
         // Define the connection string for MSSQL
         static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
@@ -39,7 +39,7 @@ namespace CST350_Milestone.Services.DataAccess
                 using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
                 {
                     // Add parameters for Username and Email to avoid SQL injection
-                    checkCommand.Parameters.AddWithValue("@Username", user.Username);
+                    checkCommand.Parameters.AddWithValue("@Username", user.UserName);
                     checkCommand.Parameters.AddWithValue("@Email", user.Email);
 
                     // Execute the query and get the count of matching records
@@ -67,7 +67,7 @@ namespace CST350_Milestone.Services.DataAccess
                     command.Parameters.AddWithValue("@Age", user.Age);
                     command.Parameters.AddWithValue("@State", user.State);
                     command.Parameters.AddWithValue("@Email", user.Email);
-                    command.Parameters.AddWithValue("@Username", user.Username);
+                    command.Parameters.AddWithValue("@Username", user.UserName);
                     command.Parameters.AddWithValue("@MyPassword", user.PasswordHash);
 
                     // Execute the query and retrieve the newly inserted user ID using ExecuteScalar
@@ -121,7 +121,7 @@ namespace CST350_Milestone.Services.DataAccess
                                 Age = reader.GetInt32(reader.GetOrdinal("Age")),
                                 State = reader.GetString(reader.GetOrdinal("State")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                UserName = reader.GetString(reader.GetOrdinal("Username")),
                                 PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
                             };
                             // Return the user's ID if the credentials are valid
@@ -216,7 +216,7 @@ namespace CST350_Milestone.Services.DataAccess
                                 Age = reader.GetInt32(reader.GetOrdinal("Age")),
                                 State = reader.GetString(reader.GetOrdinal("State")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                UserName = reader.GetString(reader.GetOrdinal("Username")),
                                 PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
                             };
 
@@ -270,7 +270,7 @@ namespace CST350_Milestone.Services.DataAccess
                                 Age = reader.GetInt32(reader.GetOrdinal("Age")),
                                 State = reader.GetString(reader.GetOrdinal("State")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                UserName = reader.GetString(reader.GetOrdinal("Username")),
                                 PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
                             };
                             // Return the user's ID if the credential are valid
@@ -324,7 +324,7 @@ namespace CST350_Milestone.Services.DataAccess
                                 Age = reader.GetInt32(reader.GetOrdinal("Age")),
                                 State = reader.GetString(reader.GetOrdinal("State")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                UserName = reader.GetString(reader.GetOrdinal("Username")),
                                 PasswordHash = reader.GetString(reader.GetOrdinal("MyPassword"))
                             };
                             // Return the user's ID if the credential are valid
