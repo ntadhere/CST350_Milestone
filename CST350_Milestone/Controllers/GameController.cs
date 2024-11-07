@@ -13,16 +13,6 @@ namespace CST350_Milestone.Controllers
 
         public IActionResult Index()
         {
-            //// Retrieve the session GameSessionId
-            //var sessionGameSessionId = HttpContext.Session.GetString("GameSessionId");
-
-            //// If there is no session game ID, the user hasn't started a game, so deny access
-            //if (string.IsNullOrEmpty(sessionGameSessionId))
-            //{
-            //    // Redirect to an error or access denied page
-            //    return View("AccessDenied");
-            //}
-
             int? boardSize = HttpContext.Session.GetInt32("BoardSize");
             int? difficulty = HttpContext.Session.GetInt32("Difficulty");
 
@@ -45,7 +35,7 @@ namespace CST350_Milestone.Controllers
         }
         public IActionResult HandleButtonClick(int buttonNumber)
         {
-            var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection") ?? new GameCollection();
+            //var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection") ?? new GameCollection();
 
             // Calculate row and column based on buttonNumber
             int row = buttonNumber / gameCollection.Board.Size;
@@ -74,6 +64,9 @@ namespace CST350_Milestone.Controllers
                     ViewBag.GameStatus = "You are win";
                 }
             }
+
+            // Save the updated game state to the session
+            //HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
 
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
