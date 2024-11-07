@@ -1,36 +1,66 @@
-﻿@model CST350_Milestone.Services.Business.GameCollection
+﻿@model CST350_Milestone.Models.BoardModel
 
 @{
     // Store image names in an array for more efficient code
     // string[] imageNames = { "bomb.png" };
-    int totalCel = Model.Board.Size * Model.Board.Size;
+    int totalCel = Model.Size * Model.Size;
+    // List<CellModel> cellData = ViewData["CellList"] as List<CellModel>;
 }
 
 
 @* Surround the entire board with a form that can be submitted *@
 
 <h1>LET'S PLAY</h1>
-
+<p>Results: @ViewBag.GameStatus</p>
 
 
 <form action="/" method="post" class="game-zone">
-    <div class="button-zone" style="--button-count: @Model.Board.Size;">
+    <div class="button-zone" style="--button-count: @Model.Size;">
         @* Iterate over the buttons and display them *@
         @for (int i = 0; i < totalCel; i++)
         {
-            
-            <button class="game-button" type="submit" name="buttonNumber" asp-controller="Button" asp-action="HandleButtonClick" onclick="showLabel(this)">
+            @* Create a section arround the game board and them make each button active*@
+            <button class="game-button" type="submit" value="@i" name="buttonNumber" asp-controller="Game" asp-action="HandleButtonClick" onclick="">
                 <!-- Add a label below each button-->
-                
+                @if (Model.CellListData[i].NumNeighbors == 9 && Model.CellListData[i].IsVisited == true)
+                {
+                    <img class="button-label" src="~/img/bomb.png" />
+                }
+                else if (Model.CellListData[i].NumNeighbors != 9 && Model.CellListData[i].IsVisited == true)
+                {
+                    <div class="button-label">
+                        @Model.CellListData[i].NumNeighbors
+                    </div>
+                }
 
-                @if (Model.getSquareOnBoard(i) == 9)
+            </button>
+        }
+    </div>
+</form>
+
+<button type="submit" asp-action="HandleButtonClick">1</button>
+
+<form asp-action="HandleButtonClick" method="post">
+    <button type="submit" name="buttonNumber" value="1">1</button>
+</form>
+
+@* 
+<form action="/" method="post" class="game-zone">
+    <div class="button-zone" style="--button-count: @Model.Board.Size;">
+        Iterate over the buttons and display them
+        @for (int i = 0; i < totalCel; i++)
+        {
+
+            <button class="game-button" type="submit" value="@i" name="bombButton" asp-controller="Game" asp-action="HandleButtonClick">
+                <!-- Add a label below each button-->
+                @if (Model.GetSquareOnBoard(i) == 9)
                 {
                     <img class="button-label hidden-label" src="~/img/bomb.png" />
                 }
                 else
                 {
                     <div class="button-label hidden-label">
-                        @Model.getSquareOnBoard(i)
+                        @Model.GetSquareOnBoard(i)
                     </div>
                 }
                  
@@ -38,4 +68,4 @@
            
         }
     </div>
-</form>
+</form> *@

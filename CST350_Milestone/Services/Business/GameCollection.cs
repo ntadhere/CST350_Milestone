@@ -9,8 +9,10 @@ namespace CST350_Milestone.Services.Business
         // This is an in-memory list of users. Later this will be a db connection.
         // The _ prefix indicates a private field
         private BoardModel board = new BoardModel();
+        private List<CellModel> cells = new List<CellModel>();
 
         public BoardModel Board => board; //Public getter to expose BoardModel
+        public List<CellModel> Cells => cells;
 
         //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         //{
@@ -24,18 +26,24 @@ namespace CST350_Milestone.Services.Business
         //    }
         //}
 
-        public void generateBoard (int size)
+        public BoardModel GenerateBoard (int size)
         {
             board.Size = size;
             // we must initialize the array to avoid Null Exception errors
             board.TheGrid = new CellModel[size, size];
+
+            // Initialize CellListData before adding items to avoid null reference
+            board.CellListData = new List<CellModel>();
+
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
                     board.TheGrid[i, j] = new CellModel(i, j);
+                    board.CellListData.Add(board.TheGrid[i, j]);
                 }
             }
+            return board;
         }
 
         /// <summary>
@@ -44,7 +52,7 @@ namespace CST350_Milestone.Services.Business
         /// <param name="row"></param>
         /// <param name="col"></param>
         /// <returns></returns>
-        public bool isSquareOnBoard(int col, int row)
+        public bool IsSquareOnBoard(int col, int row)
         {
             // -9, 5 is out of bound
             if (row < 0 || row > board.Size - 1 || col < 0 || col > board.Size - 1)
@@ -57,7 +65,7 @@ namespace CST350_Milestone.Services.Business
             }
         }
 
-        public int getSquareOnBoard(int order)
+        public int GetSquareOnBoard(int order)
         {
             int temp = 0;
             for (int i = 0; i < board.Size; i++)
@@ -78,7 +86,7 @@ namespace CST350_Milestone.Services.Business
         /// this method helps to check the win condition for the game.
         /// </summary>
         /// <returns></returns>
-        public Boolean WinCondition()
+        public Boolean IsWin()
         {
             int nonRevealCell = 0;
             Boolean isWin = false;
@@ -108,7 +116,7 @@ namespace CST350_Milestone.Services.Business
         /// what percentage of the cells in gid will be set to "live" status
         /// 
         /// </summary>
-        public void setupLiveNeighbors(int difficulty)
+        public void SetupLiveNeighbors(int difficulty)
         {
             board.Difficulty = difficulty;
             // Create a random tool
@@ -140,7 +148,7 @@ namespace CST350_Milestone.Services.Business
         /// If a cell itself is "live" then you can set the neighbor count to 9
         /// </summary>
         /// <returns></returns>
-        public void calculateLiveNeighbors()
+        public void CalculateLiveNeighbors()
         {
             // we check for each individual cell
             for (int i = 0; i < board.Size; i++)
@@ -162,7 +170,7 @@ namespace CST350_Milestone.Services.Business
                         {
                             for (int c = -1; c < 2; c++)
                             {
-                                if (isSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) && board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
+                                if (IsSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) && board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
                                 {
                                     ++currentCell.NumNeighbors;
                                 }
@@ -185,7 +193,7 @@ namespace CST350_Milestone.Services.Business
             //Console.WriteLine("{0}, {1}", col, row);
 
             // Check boundary conditions and whether the cell is a wall.
-            if (!isSquareOnBoard(col, row))
+            if (!IsSquareOnBoard(col, row))
             {
                 return;
             }
