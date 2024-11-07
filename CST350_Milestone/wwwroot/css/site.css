@@ -144,13 +144,4 @@ div .row {
     display: none;
 }
 
-.game-button-image
-{
-    display: none; /* Hidden by default */
-}
-
-.visible-image
-{
-    display: inline; /* Show image if bomb */
-}
 

@@ -26,6 +26,7 @@ namespace CST350_Milestone.Models
 
         // 2d array of Cell objects
         public CellModel[,] TheGrid { get; set; }
+        public List<CellModel> CellListData { get; set; }
 
         /// <summary>
         /// Default Constructor
@@ -33,22 +34,6 @@ namespace CST350_Milestone.Models
         public BoardModel()
         {
         }
-
-        /// <summary>
-        /// Parameterized Consturctor
-        /// </summary>
-        /// <param name="size"></param>
-        /// <param name="difficulty"></param>
-        /// <param name="theGrid"></param>
-        public BoardModel(int size, int difficulty, CellModel[,] theGrid)
-        {
-            Size = size;
-            Difficulty = difficulty;
-            TheGrid = theGrid;
-        }
-
-
-
 
 
         //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

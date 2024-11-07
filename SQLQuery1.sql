@@ -1,2 +1,0 @@
-﻿INSERT INTO dbo.MilestoneUser (Id, UserName, LastName, Sex, Age, State, Email, UserName, MyPassword)
-VALUES ('1', 'Dorothy', 'Nguyen', 'Female', '20', 'North Carolina', 'dnguyen54@my.gcu.edu', 'Dorothy', 'AQAAAAIAAYagAAAAEH01eVOWhvC7vFlpA7FJB098hLUC2yG9VH7aoa6D7eirCBM7WOhhwcCPhfBcXqXvIw==');
