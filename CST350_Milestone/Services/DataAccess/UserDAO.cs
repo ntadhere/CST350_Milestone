@@ -14,6 +14,7 @@ namespace CST350_Milestone.Services.DataAccess
         static string username = "root";
         static string password = "root";
         static string dbName = "milestoneuser";
+
         static string port = "3306";
         // Declare and Initiallize
         string query = "";
