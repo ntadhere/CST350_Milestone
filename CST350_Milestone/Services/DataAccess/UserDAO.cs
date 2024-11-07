@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace CST350_Milestone.Services.DataAccess
 {
-    public class UserDAO : IUserManager
+    public class UserDAO //: IUserManager
     {
         // Define the connection string for MSSQL
         static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
