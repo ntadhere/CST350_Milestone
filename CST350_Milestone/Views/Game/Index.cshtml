@@ -1,0 +1,38 @@
+﻿@model CST350_Milestone.Models.BoardModel
+
+@{
+    int totalCel = Model.Size * Model.Size;
+}
+
+
+@* Surround the entire board with a form that can be submitted *@
+
+<h1>LET'S PLAY</h1>
+
+
+<form action="/" method="post" class="game-zone">
+    <div class="button-zone" style="--button-count: @Model.Size;">
+        @* Iterate over the buttons and display them *@
+        
+        @for (int i = 0; i < totalCel; i++)
+        {
+            <button class="game-button" type="submit" value="@i" name="buttonNumber" name="buttonNumber" asp-controller="Game" asp-action="HandleButtonClick">
+                @if (Model.CellListData[i].IsVisited)
+                {
+                    @if (Model.CellListData[i].NumNeighbors == 9)
+                    {
+                        <img class="button-label" src="~/img/bomb.png" />
+                    }
+                    else
+                    {
+                        <div class="button-label">
+                            @Model.CellListData[i].NumNeighbors
+                        </div>
+                    }
+                }
+            </button>
+        }
+    </div>
+</form>
+
+<h2>Results: @ViewBag.GameStatus</h2>
