@@ -18,11 +18,8 @@ namespace CST350_Milestone.Controllers
 
             if (boardSize.HasValue && difficulty.HasValue)
             {
-                // **EDITED THIS PART!!!
-                BoardModel board = gameCollection.GenerateBoard(boardSize.Value);
-                //BoardModel board = new BoardModel();
                 // Initialize the board with the retrieved size
-                //board = gameCollection.GenerateBoard(boardSize.Value);
+                BoardModel board = gameCollection.GenerateBoard(boardSize.Value);
 
                 // Set up live neighbors based on the retrieved difficulty
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
@@ -35,6 +32,8 @@ namespace CST350_Milestone.Controllers
             }
             return View("AccessDenied");
         }
+
+
         public IActionResult HandleButtonClick(int buttonNumber)
         {
             //var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection") ?? new GameCollection();
@@ -53,16 +52,12 @@ namespace CST350_Milestone.Controllers
                     cell.IsVisited = true;
                 }
                 // Pass a flag to the view to show "You Lose" message
-                // **EDITED PART!!
                 HttpContext.Session.SetString("GameStatus", "You Lose");
                 ViewBag.GameStatus = "You lose!";
                 return RedirectToAction("LosePage");
             }
             else
             {
-                // If it's not a bomb, set this cell to visited
-                gameCollection.Board.TheGrid[row, col].IsVisited = true;
-
                 // FloodFill for 0
                 // If clicked cell has no neighboring boms, trigger flood fill
                 if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
@@ -70,10 +65,12 @@ namespace CST350_Milestone.Controllers
                     gameCollection.FloodFill(row, col);
                 }
 
+                // If it's not a bomb, set this cell to visited
+                gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
                 // Check for win condition after this click
                 if (gameCollection.IsWin())
-                {
-                    // ** EDITED PART!!
+                {                    
                     HttpContext.Session.SetString("GameStatus", "You Win");
                     ViewBag.GameStatus = "You win!";
                     return RedirectToAction("WinPage");
@@ -86,7 +83,7 @@ namespace CST350_Milestone.Controllers
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
         }
-        // **Added PARTS!!!
+        
         // win section
         public IActionResult WinPage()
         {
@@ -98,6 +95,5 @@ namespace CST350_Milestone.Controllers
         {
             return View();
         }
-
     }
 }
