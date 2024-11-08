@@ -18,9 +18,11 @@ namespace CST350_Milestone.Controllers
 
             if (boardSize.HasValue && difficulty.HasValue)
             {
-                BoardModel board = new BoardModel();
+                // **EDITED THIS PART!!!
+                BoardModel board = gameCollection.GenerateBoard(boardSize.Value);
+                //BoardModel board = new BoardModel();
                 // Initialize the board with the retrieved size
-                board = gameCollection.GenerateBoard(boardSize.Value);
+                //board = gameCollection.GenerateBoard(boardSize.Value);
 
                 // Set up live neighbors based on the retrieved difficulty
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
@@ -51,7 +53,8 @@ namespace CST350_Milestone.Controllers
                     cell.IsVisited = true;
                 }
                 // Pass a flag to the view to show "You Lose" message
-                ViewBag.GameStatus = "You are lose";
+                // **EDITED PART!!
+                return RedirectToAction("LosePage");
             }
             else
             {
@@ -60,16 +63,29 @@ namespace CST350_Milestone.Controllers
 
                 // Check for win condition after this click
                 if (gameCollection.IsWin())
-                {                
-                    ViewBag.GameStatus = "You are win";
+                {
+                    // ** EDITED PART!!
+                    return RedirectToAction("WinPage");
                 }
             }
 
             // Save the updated game state to the session
-            //HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
+            HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
 
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
+        }
+        // **Added PARTS!!!
+        // win section
+        public IActionResult WinPage()
+        {
+            return View();
+        }
+
+        // lose section
+        public IActionResult LosePage()
+        {
+            return View();
         }
 
     }
