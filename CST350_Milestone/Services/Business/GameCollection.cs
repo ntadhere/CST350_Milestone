@@ -215,5 +215,18 @@ namespace CST350_Milestone.Services.Business
             FloodFill(col, row + 1); // South
             FloodFill(col - 1, row); // West 
         }
+
+        /// <summary>
+        /// Method to calculate the score
+        /// </summary>
+        /// <param name="elapsedTime"></param>
+        /// <param name="boardSize"></param>
+        /// <param name="difficulty"></param>
+        /// <returns></returns>
+        public int gameCalculation(int elapsedTime, int boardSize, int difficulty)
+        {
+            int score = (boardSize * difficulty * 100) + elapsedTime;
+            return Math.Max(score, 0);
+        }
     }
 }

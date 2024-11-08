@@ -1,8 +1,10 @@
 ﻿using CST350_Milestone.Filter;
 using CST350_Milestone.Models;
 using CST350_Milestone.Services.Business;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
+using System.Text.Json;
 
 namespace CST350_Milestone.Controllers
 {
@@ -16,6 +18,7 @@ namespace CST350_Milestone.Controllers
             int? boardSize = HttpContext.Session.GetInt32("BoardSize");
             int? difficulty = HttpContext.Session.GetInt32("Difficulty");
 
+
             if (boardSize.HasValue && difficulty.HasValue)
             {
                 // Initialize the board with the retrieved size
@@ -24,6 +27,9 @@ namespace CST350_Milestone.Controllers
                 // Set up live neighbors based on the retrieved difficulty
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
                 gameCollection.CalculateLiveNeighbors();
+
+                // Start timer as soon as player starts game
+                HttpContext.Session.SetObjectAsJson("StartTime", DateTime.Now);
 
                 HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
 
@@ -87,13 +93,52 @@ namespace CST350_Milestone.Controllers
         // win section
         public IActionResult WinPage()
         {
+            // calculate score
+            int elapsedTime = GetElapsedTime();
+            int boardSize = HttpContext.Session.GetInt32("BoardSize").Value;
+            int difficulty = HttpContext.Session.GetInt32("Difficulty").Value;
+
+            // call method from game collecgion class
+            int score = gameCollection.gameCalculation(elapsedTime, boardSize, difficulty);
+
+            // pass score to win page
+            ViewBag.Score = score;
+
             return View();
         }
 
         // lose section
         public IActionResult LosePage()
         {
+            // calculate socre
+            int elapsedTime = GetElapsedTime();
+            int boardSize = HttpContext.Session.GetInt32("BoardSize").Value;
+            int difficulty = HttpContext.Session.GetInt32("Difficulty").Value;
+
+            // call method from game collecgion class
+            int score = gameCollection.gameCalculation(elapsedTime, boardSize, difficulty);
+
+            // pass score to win page
+            ViewBag.Score = score;
             return View();
+        }
+
+        /// <summary>
+        /// Calculate elapsed time
+        /// </summary>
+        /// <returns></returns>
+        public int GetElapsedTime()
+        {
+            // Retrieve the start time from session as a DateTime object
+            DateTime? startTime = HttpContext.Session.GetObjectFromJson<DateTime?>("StartTime");
+
+            if (startTime.HasValue)
+            {
+                // Calculate the difference in seconds
+                TimeSpan elapsed = DateTime.Now - startTime.Value;
+                return (int)elapsed.TotalSeconds;
+            }
+            return 0;
         }
     }
 }
