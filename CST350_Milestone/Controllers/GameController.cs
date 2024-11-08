@@ -63,6 +63,13 @@ namespace CST350_Milestone.Controllers
                 // If it's not a bomb, set this cell to visited
                 gameCollection.Board.TheGrid[row, col].IsVisited = true;
 
+                // FloodFill for 0
+                // If clicked cell has no neighboring boms, trigger flood fill
+                if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+                {
+                    gameCollection.FloodFill(row, col);
+                }
+
                 // Check for win condition after this click
                 if (gameCollection.IsWin())
                 {
