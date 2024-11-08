@@ -54,6 +54,8 @@ namespace CST350_Milestone.Controllers
                 }
                 // Pass a flag to the view to show "You Lose" message
                 // **EDITED PART!!
+                HttpContext.Session.SetString("GameStatus", "You Lose");
+                ViewBag.GameStatus = "You lose!";
                 return RedirectToAction("LosePage");
             }
             else
@@ -65,13 +67,15 @@ namespace CST350_Milestone.Controllers
                 if (gameCollection.IsWin())
                 {
                     // ** EDITED PART!!
+                    HttpContext.Session.SetString("GameStatus", "You Win");
+                    ViewBag.GameStatus = "You win!";
                     return RedirectToAction("WinPage");
                 }
             }
 
             // Save the updated game state to the session
             HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
-
+            ViewBag.GameStatus = HttpContext.Session.GetString("GameStatus") ?? "Game in Progress";
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
         }
