@@ -18,9 +18,11 @@ namespace CST350_Milestone.Controllers
 
             if (boardSize.HasValue && difficulty.HasValue)
             {
-                BoardModel board = new BoardModel();
+                // **EDITED THIS PART!!!
+                BoardModel board = gameCollection.GenerateBoard(boardSize.Value);
+                //BoardModel board = new BoardModel();
                 // Initialize the board with the retrieved size
-                board = gameCollection.GenerateBoard(boardSize.Value);
+                //board = gameCollection.GenerateBoard(boardSize.Value);
 
                 // Set up live neighbors based on the retrieved difficulty
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
@@ -51,25 +53,50 @@ namespace CST350_Milestone.Controllers
                     cell.IsVisited = true;
                 }
                 // Pass a flag to the view to show "You Lose" message
-                ViewBag.GameStatus = "You are lose";
+                // **EDITED PART!!
+                HttpContext.Session.SetString("GameStatus", "You Lose");
+                ViewBag.GameStatus = "You lose!";
+                return RedirectToAction("LosePage");
             }
             else
             {
                 // If it's not a bomb, set this cell to visited
                 gameCollection.Board.TheGrid[row, col].IsVisited = true;
 
+                // FloodFill for 0
+                // If clicked cell has no neighboring boms, trigger flood fill
+                if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+                {
+                    gameCollection.FloodFill(row, col);
+                }
+
                 // Check for win condition after this click
                 if (gameCollection.IsWin())
-                {                
-                    ViewBag.GameStatus = "You are win";
+                {
+                    // ** EDITED PART!!
+                    HttpContext.Session.SetString("GameStatus", "You Win");
+                    ViewBag.GameStatus = "You win!";
+                    return RedirectToAction("WinPage");
                 }
             }
 
             // Save the updated game state to the session
-            //HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
-
+            HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
+            ViewBag.GameStatus = HttpContext.Session.GetString("GameStatus") ?? "Game in Progress";
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
+        }
+        // **Added PARTS!!!
+        // win section
+        public IActionResult WinPage()
+        {
+            return View();
+        }
+
+        // lose section
+        public IActionResult LosePage()
+        {
+            return View();
         }
 
     }
