@@ -1,10 +1,9 @@
 ﻿@model CST350_Milestone.Models.BoardModel
 
 @{
+    // Calculate the total number of cells based on the board's size (assuming a square board).
     int totalCel = Model.Size * Model.Size;
 }
-
-
 @* Surround the entire board with a form that can be submitted *@
 
 <h1>LET'S PLAY</h1>
@@ -16,15 +15,24 @@
         
         @for (int i = 0; i < totalCel; i++)
         {
-            <button class="game-button" type="submit" value="@i" name="buttonNumber" name="buttonNumber" asp-controller="Game" asp-action="HandleButtonClick">
+            <button class="game-button" @* Assigns a CSS class for styling the button *@
+                    type="submit" @* Sets the button as a submit button, triggering form submission when clicked *@
+                    value="@i" @* Sets the button's value to the current cell index, representing the cell's position on the board *@
+                    name="buttonNumber" @* Names the button 'buttonNumber' so its value is sent as form data with this name *@
+                    asp-controller="Game" @* Specifies the 'Game' controller to handle the form submission *@
+                    asp-action="HandleButtonClick">
+                @* Specifies the 'HandleButtonClick' action method within the 'Game' controller to process the click *@
+                @* Check if the cell has been visited *@
                 @if (Model.CellListData[i].IsVisited)
                 {
+                    @* If the cell contains a bomb (NumNeighbors == 9), display a bomb icon *@
                     @if (Model.CellListData[i].NumNeighbors == 9)
                     {
                         <img class="button-label" src="~/img/bomb.png" />
                     }
                     else
                     {
+                        @* Otherwise, display the number of neighboring bombs *@
                         <div class="button-label">
                             @Model.CellListData[i].NumNeighbors
                         </div>
@@ -35,4 +43,5 @@
     </div>
 </form>
 
+@* Display the game's current status (win, loss, etc.) *@
 <h2>Results: @ViewBag.GameStatus</h2>

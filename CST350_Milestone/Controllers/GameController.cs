@@ -15,6 +15,8 @@ namespace CST350_Milestone.Controllers
 
         public IActionResult Index()
         {
+            // Retrieve the "BoardSize" and "Difficulty" values from the session and assign them to nullable integer variables.
+            // If these values are not present in the session, the variables will be set to null.
             int? boardSize = HttpContext.Session.GetInt32("BoardSize");
             int? difficulty = HttpContext.Session.GetInt32("Difficulty");
 

@@ -7,7 +7,7 @@ namespace CST350_Milestone.Services.DataAccess
     public class UserDAO //: IUserManager
     {
         // Define the connection string for MSSQL
-        static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Player;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         // Define the connection string for MySQL
         static string serverName = "localhost";
