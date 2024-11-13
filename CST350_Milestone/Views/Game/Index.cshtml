@@ -12,16 +12,16 @@
 <form action="/" method="post" class="game-zone">
     <div class="button-zone" style="--button-count: @Model.Size;">
         @* Iterate over the buttons and display them *@
-        
+
         @for (int i = 0; i < totalCel; i++)
         {
-            <button class="game-button" @* Assigns a CSS class for styling the button *@
-                    type="submit" @* Sets the button as a submit button, triggering form submission when clicked *@
-                    value="@i" @* Sets the button's value to the current cell index, representing the cell's position on the board *@
-                    name="buttonNumber" @* Names the button 'buttonNumber' so its value is sent as form data with this name *@
-                    asp-controller="Game" @* Specifies the 'Game' controller to handle the form submission *@
-                    asp-action="HandleButtonClick">
-                @* Specifies the 'HandleButtonClick' action method within the 'Game' controller to process the click *@
+            @* Assigns a CSS class for styling the button *@
+            @* Sets the button as a submit button, triggering form submission when clicked *@
+            @* Sets the button's value to the current cell index, representing the cell's position on the board *@
+            @* Names the button 'buttonNumber' so its value is sent as form data with this name *@
+            @* Specifies the 'Game' controller to handle the form submission *@
+            @* Specifies the 'HandleButtonClick' action method within the 'Game' controller to process the click *@
+            <button class="game-button" type="submit" value="@i" name="buttonNumber" name="buttonNumber" asp-controller="Game" asp-action="HandleButtonClick">
                 @* Check if the cell has been visited *@
                 @if (Model.CellListData[i].IsVisited)
                 {
