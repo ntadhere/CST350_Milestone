@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace CST350_Milestone.Services.DataAccess
 {
-    public class UserDAO : IUserManager
+    public class UserDAO //: IUserManager
     {
         // Define the connection string for MSSQL
         static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MilestoneUser;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
@@ -13,7 +13,7 @@ namespace CST350_Milestone.Services.DataAccess
         static string serverName = "localhost";
         static string username = "root";
         static string password = "root";
-        static string dbName = "milestoneuser";
+        static string dbName = "player";
 
         static string port = "3306";
         // Declare and Initiallize
@@ -34,6 +34,7 @@ namespace CST350_Milestone.Services.DataAccess
                 connection.Open();
 
                 // Step 1: Check if the user already exists (based on Username or Email).
+                // **Player replaced with MilestoneUser
                 string checkQuery = @"SELECT COUNT(*) FROM Player WHERE Username = @Username OR Email = @Email";
 
                 using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
@@ -54,6 +55,7 @@ namespace CST350_Milestone.Services.DataAccess
                 }
 
                 // Step 2: If the user does not exist, proceed with the insertion
+                // Replaced Player with MilestoneUser
                 string query = @"INSERT INTO Player (FirstName, LastName, Sex, Age, State, Email, Username, MyPassword)
                   VALUES (@FirstName, @LastName, @Sex, @Age, @State, @Email, @Username, @MyPassword);
                   SELECT SCOPE_IDENTITY();";
@@ -96,6 +98,7 @@ namespace CST350_Milestone.Services.DataAccess
             {
                 // Open the connection to the db
                 connection.Open();
+                // ** Relaced Player with MilestoneUser
                 query = "SELECT * FROM Player WHERE Username = @Username AND MyPassword = @MyPassword";
 
                 // Create a SQL command object
@@ -157,6 +160,7 @@ namespace CST350_Milestone.Services.DataAccess
 
                 // Define the SQL query to delete a user from the UserAccount table based on the user's ID.
                 // Using string formatting here is risky (SQL Injection), so it's better to use a parameterized query.
+                // Replaced Player with MilestoneUser
                 string query = "DELETE FROM Player WHERE Id = @Id";
 
                 // Create a SQL command object using the query and open connection.
@@ -190,6 +194,7 @@ namespace CST350_Milestone.Services.DataAccess
             List<UserModel> users = new List<UserModel>();
 
             // SQL query to select all users
+            // Replaced Player with MilestoneUser
             string query = "SELECT Id, FirstName, LastName, Sex, Age, State, Email, Username, MyPassword FROM Player";
 
             // Using a SQL connection
@@ -246,6 +251,7 @@ namespace CST350_Milestone.Services.DataAccess
                 connection.Open();
 
                 // Define the SQL query using a parameter placeholder (@Username)
+                // Replaced Player with MilestoneUser
                 string query = "SELECT * FROM Player WHERE Username = @Username";
 
                 // Create a SQL command object using the query and open connection
@@ -303,6 +309,7 @@ namespace CST350_Milestone.Services.DataAccess
                 connection.Open();
 
                 // Define the SQL query to select a single users based on id
+                // Replaced Player with MilestoneUser
                 query = string.Format("SELECT * FROM Player WHERE Id = {0}", id);
 
                 // Create a SQL command object using the query and open connection

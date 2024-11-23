@@ -1,6 +1,11 @@
 ﻿@model CST350_Milestone.Models.BoardModel
 
-<h1>Start Game</h1>
+
+@{
+    // Begin Razor Code Block
+    <h1> Start MINESWEEPER GAME</h1>
+    <p>Welcome player</p>
+    <p>Please Choose Your Game size and Number of bombs</p>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,6 +29,7 @@
     </div>
 </div>
 
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -32,4 +38,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+}
 }

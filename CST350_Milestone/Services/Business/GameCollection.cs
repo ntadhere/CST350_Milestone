@@ -7,25 +7,19 @@ namespace CST350_Milestone.Services.Business
     public class GameCollection
     {
         // This is an in-memory list of users. Later this will be a db connection.
-        // The _ prefix indicates a private field
         private BoardModel board = new BoardModel();
-        private List<CellModel> cells = new List<CellModel>();
+        //private List<CellModel> cells = new List<CellModel>();
 
+        // This line allows other parts of your program to access the board instance
+        // without allowing them to modify it directly (since there is no set accessor).
+        // It's a way to expose board for read-only access.
         public BoardModel Board => board; //Public getter to expose BoardModel
-        public List<CellModel> Cells => cells;
 
-        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        //{
-        //    int maxDifficulty = Size * Size - 1;
-
-        //    if (Difficulty < 0 || Difficulty > maxDifficulty)
-        //    {
-        //        yield return new ValidationResult(
-        //            $"Difficulty must be between 0 and {maxDifficulty}.",
-        //            new[] { nameof(Difficulty) });
-        //    }
-        //}
-
+        /// <summary>
+        /// This method help to generate a new board for game then return the model
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public BoardModel GenerateBoard (int size)
         {
             board.Size = size;
@@ -63,23 +57,6 @@ namespace CST350_Milestone.Services.Business
             {
                 return true;
             }
-        }
-
-        public int GetSquareOnBoard(int order)
-        {
-            int temp = 0;
-            for (int i = 0; i < board.Size; i++)
-            {
-                for (int j = 0; j < board.Size; j++)
-                {
-                    if (temp == order)
-                    {
-                        return board.TheGrid[i, j].NumNeighbors;
-                    }
-                    temp++;
-                }
-            }
-            return -1;
         }
 
         /// <summary>
@@ -214,6 +191,19 @@ namespace CST350_Milestone.Services.Business
             FloodFill(col + 1, row); // East            
             FloodFill(col, row + 1); // South
             FloodFill(col - 1, row); // West 
+        }
+
+        /// <summary>
+        /// Method to calculate the score
+        /// </summary>
+        /// <param name="elapsedTime"></param>
+        /// <param name="boardSize"></param>
+        /// <param name="difficulty"></param>
+        /// <returns></returns>
+        public int gameCalculation(int elapsedTime, int boardSize, int difficulty)
+        {
+            int score = (boardSize * difficulty * 100) + elapsedTime;
+            return Math.Max(score, 0);
         }
     }
 }
