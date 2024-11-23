@@ -41,6 +41,20 @@ namespace CST350_Milestone.Controllers
             return View("AccessDenied");
         }
 
+        // Action method to process right mouse clicks
+        [HttpPost]
+        public IActionResult RightClickShowOneButton(int buttonNumber)
+        {
+            // Calculate row and column based on buttonNumber
+            int row = buttonNumber / gameCollection.Board.Size;
+            int col = buttonNumber % gameCollection.Board.Size;
+
+            gameCollection.Board.TheGrid[row, col].IsFlag = true;
+
+            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+            //return View("Index", buttons);
+
+        }
 
         public IActionResult HandleButtonClick(int buttonNumber)
         {
