@@ -19,6 +19,7 @@ namespace CST350_Milestone.Models
     public class CellModel
     {
         // row and col are the cell's location on the grid
+        public int Id { get; set; }
         public int ColNumber { get; set; }
         public int RowNumber { get; set; }
 
@@ -28,11 +29,13 @@ namespace CST350_Milestone.Models
         public bool IsVisited { get; set; }
         // T/F is this location have bome
         public bool IsLive { get; set; }
+        public bool IsFlag { get; set; }
         // constructor
         public CellModel(int c, int r)
         {
             RowNumber = r;
             ColNumber = c;
+            IsFlag = false;
         }
     }
 }

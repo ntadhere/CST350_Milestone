@@ -41,14 +41,97 @@ namespace CST350_Milestone.Controllers
             return View("AccessDenied");
         }
 
+        // Action method to process right mouse clicks to place a flag
+        [HttpPost]
+        public IActionResult RightClickShowOneButton(int cellNumber)
+        {
+            // Calculate row and column based on cellNumber
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
 
-        public IActionResult HandleButtonClick(int buttonNumber)
+            // If there already a flag there, remove it then return the update button
+            if (gameCollection.Board.TheGrid[row, col].IsFlag == true)
+            {
+                gameCollection.Board.TheGrid[row, col].IsFlag = false;
+            }
+            // If ther is no flag there, plant a flag
+            else
+            {
+                gameCollection.Board.TheGrid[row, col].IsFlag = true;
+            }
+
+            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+            //return View("Index", buttons);
+
+        }
+
+        // Action method to process left mouse clicks
+        // If the cell has flag, the cell will not response to the left-click events
+        // If the cell does not has flag, we will show the number of neighbors
+        public IActionResult ShowOneButton(int cellNumber)
+        {
+            // Calculate row and column based on cellNumber
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
+
+            // check if there is a flag already in the cell, the cell will not response to the left-click events
+            if (gameCollection.Board.TheGrid[row, col].IsFlag == true)
+            {
+                return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+            }
+            else
+            {
+                // Check if the clicked cell is a bomb
+                if (gameCollection.Board.TheGrid[row, col].IsLive)
+                {
+                    // Reveal the entire board
+                    foreach (var cell in gameCollection.Board.TheGrid)
+                    {
+                        cell.IsVisited = true;
+                    }
+                    // Pass a flag to the view to show "You Lose" message
+                    HttpContext.Session.SetString("GameStatus", "You Lose");
+                    ViewBag.GameStatus = "You lose!";
+                    return View("LosePage");
+                }
+                else
+                {
+                    // FloodFill for 0
+                    // If clicked cell has no neighboring boms, trigger flood fill
+                    if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+                    {
+                        gameCollection.FloodFill(row, col);
+                    }
+
+                    // If it's not a bomb, set this cell to visited
+                    gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
+                    // Check for win condition after this click
+                    if (gameCollection.IsWin())
+                    {
+                        HttpContext.Session.SetString("GameStatus", "You Win");
+                        ViewBag.GameStatus = "You win!";
+                        return View("WinPage");
+                    }
+                }
+
+            }
+
+            // Save the updated game state to the session
+            HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
+            ViewBag.GameStatus = HttpContext.Session.GetString("GameStatus") ?? "Game in Progress";
+            // Pass the gameCollection back to the view
+            //return View("Index", gameCollection.Board);
+            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+        }
+
+        public IActionResult HandleButtonClick(int cellNumber)
         {
             //var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection") ?? new GameCollection();
 
-            // Calculate row and column based on buttonNumber
-            int row = buttonNumber / gameCollection.Board.Size;
-            int col = buttonNumber % gameCollection.Board.Size;
+            // Calculate row and column based on cellNumber
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
 
 
             // Check if the clicked cell is a bomb

@@ -15,30 +15,9 @@
 
         @for (int i = 0; i < totalCel; i++)
         {
-            @* Assigns a CSS class for styling the button *@
-            @* Sets the button as a submit button, triggering form submission when clicked *@
-            @* Sets the button's value to the current cell index, representing the cell's position on the board *@
-            @* Names the button 'buttonNumber' so its value is sent as form data with this name *@
-            @* Specifies the 'Game' controller to handle the form submission *@
-            @* Specifies the 'HandleButtonClick' action method within the 'Game' controller to process the click *@
-            <button class="game-button" type="submit" value="@i" name="buttonNumber" name="buttonNumber" asp-controller="Game" asp-action="HandleButtonClick">
-                @* Check if the cell has been visited *@
-                @if (Model.CellListData[i].IsVisited)
-                {
-                    @* If the cell contains a bomb (NumNeighbors == 9), display a bomb icon *@
-                    @if (Model.CellListData[i].NumNeighbors == 9)
-                    {
-                        <img class="button-label" src="~/img/bomb.png" />
-                    }
-                    else
-                    {
-                        @* Otherwise, display the number of neighboring bombs *@
-                        <div class="button-label">
-                            @Model.CellListData[i].NumNeighbors
-                        </div>
-                    }
-                }
-            </button>
+            <div id="@i">
+                @Html.Partial("ShowOneButton", @Model.CellListData[i])
+            </div>
         }
     </div>
 </form>
