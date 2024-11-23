@@ -41,21 +41,20 @@ namespace CST350_Milestone.Controllers
             return View("AccessDenied");
         }
 
-        // Action method to process right mouse clicks
+        // Action method to process right mouse clicks to place a flag
         [HttpPost]
         public IActionResult RightClickShowOneButton(int cellNumber)
         {
-            // Get the button model from your data source (e.g., a database or in-memory list)
-            //var cell = buttons.FirstOrDefault(b => b.Id == cellNumber);
-
             // Calculate row and column based on cellNumber
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
 
+            // If there already a flag there, remove it then return the update button
             if (gameCollection.Board.TheGrid[row, col].IsFlag == true)
             {
                 gameCollection.Board.TheGrid[row, col].IsFlag = false;
             }
+            // If ther is no flag there, plant a flag
             else
             {
                 gameCollection.Board.TheGrid[row, col].IsFlag = true;
@@ -67,7 +66,7 @@ namespace CST350_Milestone.Controllers
         }
 
         // Action method to process left mouse clicks
-        // If the cell has flag, we will disable the flag
+        // If the cell has flag, the cell will not response to the left-click events
         // If the cell does not has flag, we will show the number of neighbors
         public IActionResult ShowOneButton(int cellNumber)
         {
@@ -75,6 +74,7 @@ namespace CST350_Milestone.Controllers
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
 
+            // check if there is a flag already in the cell, the cell will not response to the left-click events
             if (gameCollection.Board.TheGrid[row, col].IsFlag == true)
             {
                 return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
