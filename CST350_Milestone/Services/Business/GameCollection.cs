@@ -22,6 +22,7 @@ namespace CST350_Milestone.Services.Business
         /// <returns></returns>
         public BoardModel GenerateBoard (int size)
         {
+            int id = 0;
             board.Size = size;
             // we must initialize the array to avoid Null Exception errors
             board.TheGrid = new CellModel[size, size];
@@ -35,6 +36,8 @@ namespace CST350_Milestone.Services.Business
                 {
                     board.TheGrid[i, j] = new CellModel(i, j);
                     board.CellListData.Add(board.TheGrid[i, j]);
+                    board.TheGrid[i, j].Id = id;
+                    id++;
                 }
             }
             return board;

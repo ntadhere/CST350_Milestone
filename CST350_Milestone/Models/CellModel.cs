@@ -19,6 +19,7 @@ namespace CST350_Milestone.Models
     public class CellModel
     {
         // row and col are the cell's location on the grid
+        public int Id { get; set; }
         public int ColNumber { get; set; }
         public int RowNumber { get; set; }
 
