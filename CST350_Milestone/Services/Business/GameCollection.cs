@@ -198,6 +198,8 @@ namespace CST350_Milestone.Services.Business
 
         /// <summary>
         /// Method to calculate the score
+        /// Milestone 3
+        /// Change method
         /// </summary>
         /// <param name="elapsedTime"></param>
         /// <param name="boardSize"></param>

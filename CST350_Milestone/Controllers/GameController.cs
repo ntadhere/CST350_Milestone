@@ -210,6 +210,8 @@ namespace CST350_Milestone.Controllers
 
         /// <summary>
         /// Calculate elapsed time
+        /// Milestone 3
+        /// Changing Method
         /// </summary>
         /// <returns></returns>
         public int GetElapsedTime()
