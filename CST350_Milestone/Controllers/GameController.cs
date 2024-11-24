@@ -151,7 +151,7 @@ namespace CST350_Milestone.Controllers
             return View("Index", gameCollection.Board);
         }
 
-
+        // win section
         public IActionResult WinPage()
         {
             int elapsedTime = GetElapsedTime();
@@ -160,6 +160,7 @@ namespace CST350_Milestone.Controllers
             return View();
         }
 
+        // lose section
         public IActionResult LosePage()
         {
             int elapsedTime = GetElapsedTime();

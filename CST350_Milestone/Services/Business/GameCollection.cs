@@ -89,7 +89,7 @@ namespace CST350_Milestone.Services.Business
             }
         }
 
-        /// <summary>
+        /// <summary>   
         /// Calculates the number of live neighbors for each cell on the grid.
         /// </summary>
         public void CalculateLiveNeighbors()
