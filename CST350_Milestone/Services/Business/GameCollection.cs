@@ -1,33 +1,27 @@
 ﻿using CST350_Milestone.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System;
 
 namespace CST350_Milestone.Services.Business
 {
     public class GameCollection
     {
-        // This is an in-memory list of users. Later this will be a db connection.
         private BoardModel board = new BoardModel();
-        //private List<CellModel> cells = new List<CellModel>();
 
-        // This line allows other parts of your program to access the board instance
-        // without allowing them to modify it directly (since there is no set accessor).
-        // It's a way to expose board for read-only access.
-        public BoardModel Board => board; //Public getter to expose BoardModel
+        // Public getter for the board to expose it for read-only access
+        public BoardModel Board => board;
 
         /// <summary>
-        /// This method help to generate a new board for game then return the model
+        /// Generates a new game board with the specified size and initializes the grid.
         /// </summary>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public BoardModel GenerateBoard (int size)
+        /// <param name="size">The size of the board</param>
+        /// <returns>Returns the populated board model</returns>
+        public BoardModel GenerateBoard(int size)
         {
             int id = 0;
             board.Size = size;
-            // we must initialize the array to avoid Null Exception errors
             board.TheGrid = new CellModel[size, size];
-
-            // Initialize CellListData before adding items to avoid null reference
             board.CellListData = new List<CellModel>();
 
             for (int i = 0; i < size; i++)
@@ -44,115 +38,82 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// check if the square on the board or not
+        /// Checks if a square is within the boundaries of the board.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns></returns>
+        /// <param name="col">Column index</param>
+        /// <param name="row">Row index</param>
+        /// <returns>True if the square is within the board; otherwise false</returns>
         public bool IsSquareOnBoard(int col, int row)
         {
-            // -9, 5 is out of bound
-            if (row < 0 || row > board.Size - 1 || col < 0 || col > board.Size - 1)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return row >= 0 && row < board.Size && col >= 0 && col < board.Size;
         }
 
         /// <summary>
-        /// this method helps to check the win condition for the game.
+        /// Checks whether the game has been won.
         /// </summary>
-        /// <returns></returns>
-        public Boolean IsWin()
+        /// <returns>True if the game is won; otherwise false</returns>
+        public bool IsWin()
         {
-            int nonRevealCell = 0;
-            Boolean isWin = false;
+            int nonRevealedCells = 0;
+            foreach (var cell in board.CellListData)
+            {
+                if (!cell.IsVisited)
+                    nonRevealedCells++;
+            }
 
-            // find the number of non-revealed cell
-            for (int i = 0; i < board.Size; i++)
-            {
-                for (int j = 0; j < board.Size; j++)
-                {
-                    if (board.TheGrid[i, j].IsVisited == false)
-                    {
-                        nonRevealCell++;
-                    }
-                }
-            }
-            // if the number of bomb placed equal to the number of non-reveal cell
-            if (board.Difficulty == nonRevealCell)
-            {
-                isWin = true;
-            }
-            return isWin;
+            return nonRevealedCells == board.Difficulty;
         }
 
         /// <summary>
-        /// method randomly initialize the grid with live bombs.
-        /// The method should utilize the Difficulty property to determine 
-        /// what percentage of the cells in gid will be set to "live" status
-        /// 
+        /// Initializes live bomb cells randomly across the board based on the difficulty.
         /// </summary>
+        /// <param name="difficulty">The difficulty determining the number of bombs</param>
         public void SetupLiveNeighbors(int difficulty)
         {
             board.Difficulty = difficulty;
-            // Create a random tool
             Random rnd = new Random();
 
             for (int x = 0; x < board.Difficulty; x++)
             {
-                Boolean isSuccess = false;
-                while (isSuccess == false)
+                bool isSuccess = false;
+                while (!isSuccess)
                 {
                     int newRow = rnd.Next(0, board.Size);
                     int newCol = rnd.Next(0, board.Size);
-                    if (board.TheGrid[newCol, newRow].IsLive == false)
+                    if (!board.TheGrid[newCol, newRow].IsLive)
                     {
                         board.TheGrid[newCol, newRow].IsLive = true;
                         isSuccess = true;
-                    }
-                    else
-                    {
-                        isSuccess = false;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// A method to calculate the live neighbors for every cell on the grid
-        /// A cell should have between 0 and 8 live neighbors.
-        /// If a cell itself is "live" then you can set the neighbor count to 9
+        /// Calculates the number of live neighbors for each cell on the grid.
         /// </summary>
-        /// <returns></returns>
         public void CalculateLiveNeighbors()
         {
-            // we check for each individual cell
             for (int i = 0; i < board.Size; i++)
             {
                 for (int j = 0; j < board.Size; j++)
                 {
-                    CellModel currentCell = board.TheGrid[i, j];
+                    var currentCell = board.TheGrid[i, j];
 
-                    // if the current cell is a bomb. set its value to 9
                     if (currentCell.IsLive)
                     {
-                        currentCell.NumNeighbors = 9;
+                        currentCell.NumNeighbors = 9; // Bombs have 9 neighbors
                     }
-
-                    // if not, for any neighbor near by is a bomb, increment the numNeighbors of current cell by 1
                     else
                     {
-                        for (int r = -1; r < 2; r++)
+                        for (int r = -1; r <= 1; r++)
                         {
-                            for (int c = -1; c < 2; c++)
+                            for (int c = -1; c <= 1; c++)
                             {
-                                if (IsSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) && board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
+                                if (IsSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) &&
+                                    board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
                                 {
-                                    ++currentCell.NumNeighbors;
+                                    currentCell.NumNeighbors++;
                                 }
                             }
                         }
@@ -162,53 +123,32 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Recursive private method that implements the flood fill algorithm.
+        /// Applies flood fill to a given cell to reveal adjacent cells with 0 neighbors.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="targetColor"></param>
-        /// <param name="replacementColor"></param>
+        /// <param name="col">Column index of the start cell</param>
+        /// <param name="row">Row index of the start cell</param>
         public void FloodFill(int col, int row)
         {
-            //Console.WriteLine("{0}, {1}", col, row);
+            if (!IsSquareOnBoard(col, row)) return;
+            var currentCell = board.TheGrid[col, row];
 
-            // Check boundary conditions and whether the cell is a wall.
-            if (!IsSquareOnBoard(col, row))
-            {
-                return;
-            }
+            if (currentCell.NumNeighbors != 0 || currentCell.IsVisited) return;
 
-
-            // If the cell's num of neighbor is not 0 or the cell is visited, return immediately.
-            if (board.TheGrid[col, row].NumNeighbors != 0 || board.TheGrid[col, row].IsVisited == true)
-            {
-                return;
-            }
-
-
-            // Change the color of the current cell to the replacement color.
-            board.TheGrid[col, row].IsVisited = true;
-
-            // Recursively flood fill the neighboring cells in all four directions.
-            FloodFill(col, row - 1); // North          
-            FloodFill(col + 1, row); // East            
+            currentCell.IsVisited = true;
+            FloodFill(col, row - 1); // North
+            FloodFill(col + 1, row); // East
             FloodFill(col, row + 1); // South
-            FloodFill(col - 1, row); // West 
+            FloodFill(col - 1, row); // West
         }
 
         /// <summary>
-        /// Method to calculate the score
-        /// Milestone 3
-        /// Change method
+        /// Calculates the final score based on elapsed time and difficulty.
         /// </summary>
-        /// <param name="elapsedTime"></param>
-        /// <param name="boardSize"></param>
-        /// <param name="difficulty"></param>
-        /// <returns></returns>
-        public int gameCalculation(int elapsedTime, int boardSize, int difficulty)
+        /// <param name="elapsedTime">Elapsed time during the game</param>
+        /// <returns>The calculated score</returns>
+        public int CalculateGameScore(int elapsedTime)
         {
-            int score = (boardSize * difficulty * 100) + elapsedTime;
-            return Math.Max(score, 0);
+            return Math.Max(elapsedTime, 0);
         }
     }
 }
