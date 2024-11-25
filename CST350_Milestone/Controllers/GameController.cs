@@ -3,50 +3,111 @@ using CST350_Milestone.Models;
 using CST350_Milestone.Services.Business;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing;
-using System.Text.Json;
+using System;
+using System.Linq;
 
 namespace CST350_Milestone.Controllers
 {
-
     public class GameController : Controller
     {
-        static GameCollection gameCollection = new GameCollection();
+        private static GameCollection gameCollection = new GameCollection();
 
         public IActionResult Index()
         {
             int? boardSize = HttpContext.Session.GetInt32("BoardSize");
             int? difficulty = HttpContext.Session.GetInt32("Difficulty");
 
-
             if (boardSize.HasValue && difficulty.HasValue)
             {
-                // Initialize the board with the retrieved size
                 BoardModel board = gameCollection.GenerateBoard(boardSize.Value);
-
-                // Set up live neighbors based on the retrieved difficulty
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
                 gameCollection.CalculateLiveNeighbors();
 
                 // Start timer as soon as player starts game
                 HttpContext.Session.SetObjectAsJson("StartTime", DateTime.Now);
 
-                HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
-
+                // Save only necessary game state
+                HttpContext.Session.SetObjectAsJson("Board", board);
+                HttpContext.Session.SetObjectAsJson("GameStatus", "Game in Progress");
 
                 return View("Index", board);
             }
+
             return View("AccessDenied");
         }
 
+        // Action method to process right mouse clicks to place a flag
+        [HttpPost]
+        public IActionResult RightClickShowOneButton(int cellNumber)
+        {
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
 
-        public IActionResult HandleButtonClick(int buttonNumber)
+            // Toggle flag state
+            gameCollection.Board.TheGrid[row, col].IsFlag = !gameCollection.Board.TheGrid[row, col].IsFlag;
+
+            // Save the updated board to session
+            HttpContext.Session.SetObjectAsJson("Board", gameCollection.Board);
+            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+        }
+
+        // Action method to process left mouse clicks
+        public IActionResult ShowOneButton(int cellNumber)
+        {
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
+
+            // If flagged, do nothing
+            if (gameCollection.Board.TheGrid[row, col].IsFlag)
+            {
+                return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+            }
+
+            // If it's a bomb, reveal the whole board
+            if (gameCollection.Board.TheGrid[row, col].IsLive)
+            {
+                foreach (var cell in gameCollection.Board.TheGrid)
+                {
+                    cell.IsVisited = true;
+                }
+
+                // Set Game Status
+                HttpContext.Session.SetString("GameStatus", "You Lose");
+                ViewBag.GameStatus = "You lose!";
+                return RedirectToAction("LosePage");
+            }
+            else
+            {
+                // If no bomb, update cell and check for win
+                if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+                {
+                    gameCollection.FloodFill(row, col);
+                }
+
+                gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
+                if (gameCollection.IsWin())
+                {
+                    HttpContext.Session.SetString("GameStatus", "You Win");
+                    ViewBag.GameStatus = "You win!";
+                    return RedirectToAction("WinPage");
+                }
+            }
+
+            // Save updated board state
+            HttpContext.Session.SetObjectAsJson("Board", gameCollection.Board);
+            ViewBag.GameStatus = HttpContext.Session.GetString("GameStatus") ?? "Game in Progress";
+
+            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+        }
+
+        public IActionResult HandleButtonClick(int cellNumber)
         {
             //var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection") ?? new GameCollection();
 
-            // Calculate row and column based on buttonNumber
-            int row = buttonNumber / gameCollection.Board.Size;
-            int col = buttonNumber % gameCollection.Board.Size;
+            // Calculate row and column based on cellNumber
+            int row = cellNumber / gameCollection.Board.Size;
+            int col = cellNumber % gameCollection.Board.Size;
 
 
             // Check if the clicked cell is a bomb
@@ -59,7 +120,7 @@ namespace CST350_Milestone.Controllers
                 }
                 // Pass a flag to the view to show "You Lose" message
                 HttpContext.Session.SetString("GameStatus", "You Lose");
-                ViewBag.GameStatus = "You lose!";
+                ViewBag.GameStatus = LosePage();
                 return RedirectToAction("LosePage");
             }
             else
@@ -76,9 +137,9 @@ namespace CST350_Milestone.Controllers
 
                 // Check for win condition after this click
                 if (gameCollection.IsWin())
-                {                    
+                {
                     HttpContext.Session.SetString("GameStatus", "You Win");
-                    ViewBag.GameStatus = "You win!";
+                    ViewBag.GameStatus = WinPage();
                     return RedirectToAction("WinPage");
                 }
             }
@@ -89,21 +150,16 @@ namespace CST350_Milestone.Controllers
             // Pass the gameCollection back to the view
             return View("Index", gameCollection.Board);
         }
-        
+
         // win section
         public IActionResult WinPage()
         {
-            // calculate score
+            // calculate socre
             int elapsedTime = GetElapsedTime();
-            int boardSize = HttpContext.Session.GetInt32("BoardSize").Value;
-            int difficulty = HttpContext.Session.GetInt32("Difficulty").Value;
-
-            // call method from game collecgion class
-            int score = gameCollection.gameCalculation(elapsedTime, boardSize, difficulty);
-
+            // call method from game collection class
+            int score = gameCollection.CalculateGameScore(elapsedTime);
             // pass score to win page
-            ViewBag.Score = score;
-
+            ViewBag.GameStatus = score;
             return View();
         }
 
@@ -112,14 +168,10 @@ namespace CST350_Milestone.Controllers
         {
             // calculate socre
             int elapsedTime = GetElapsedTime();
-            int boardSize = HttpContext.Session.GetInt32("BoardSize").Value;
-            int difficulty = HttpContext.Session.GetInt32("Difficulty").Value;
-
-            // call method from game collecgion class
-            int score = gameCollection.gameCalculation(elapsedTime, boardSize, difficulty);
-
-            // pass score to win page
-            ViewBag.Score = score;
+            // call method from game collection class
+            int score = gameCollection.CalculateGameScore(elapsedTime);
+            // pass score to lose page
+            ViewBag.GameStatus = score;
             return View();
         }
 
@@ -131,7 +183,6 @@ namespace CST350_Milestone.Controllers
         {
             // Retrieve the start time from session as a DateTime object
             DateTime? startTime = HttpContext.Session.GetObjectFromJson<DateTime?>("StartTime");
-
             if (startTime.HasValue)
             {
                 // Calculate the difference in seconds

@@ -1,0 +1,29 @@
+﻿@model CST350_Milestone.Models.CellModel
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<button class="game-button" type="submit" value="@Model.Id" name="cellNumber" asp-controller="Game" asp-action="ShowOneButton">
+    @* Check if the cell has been visited *@
+    @if (Model.IsVisited)
+    {
+        @* If the cell contains a bomb (NumNeighbors == 9), display a bomb icon *@
+        @if (Model.NumNeighbors == 9)
+        {
+            <img class="button-label" src="~/img/bomb.png" />
+        }
+
+        else
+        {
+            @* Otherwise, display the number of neighboring bombs *@
+            <div class="button-label">
+                @Model.NumNeighbors
+            </div>
+        }
+    }
+    else if (Model.IsFlag == true)
+    {
+        <img class="button-label" src="~/img/flag.ico" />
+    }
+</button>
