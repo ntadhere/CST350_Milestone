@@ -66,21 +66,26 @@ namespace CST350_Milestone.Services.Business
         // Handle right-click action to toggle flags
         public GameResult HandleRightClick(int cellNumber)
         {
+            // Calculate the row and column based on the cell number
             int row = cellNumber / _gameCollection.Board.Size;
             int col = cellNumber % _gameCollection.Board.Size;
 
+            // Initialize the message variable to indicate flag status
             string message = "";
+            // Check if the cell is already flagged
             if (_gameCollection.Board.TheGrid[row, col].IsFlag)
             {
+                // If the cell is flagged, remove the flag and update the message
                 _gameCollection.Board.TheGrid[row, col].IsFlag = false;
                 message = "Flag removed.";
             }
             else
             {
+                // If the cell is not flagged, place a flag and update the message
                 _gameCollection.Board.TheGrid[row, col].IsFlag = true;
                 message = "Flag placed.";
             }
-
+            // Return the current game state and the message indicating the flag change
             return new GameResult(_gameCollection.Board, message);
         }
 

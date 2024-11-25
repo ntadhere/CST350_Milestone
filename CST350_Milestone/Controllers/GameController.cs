@@ -154,8 +154,11 @@ namespace CST350_Milestone.Controllers
         // win section
         public IActionResult WinPage()
         {
+            // calculate socre
             int elapsedTime = GetElapsedTime();
+            // call method from game collection class
             int score = gameCollection.CalculateGameScore(elapsedTime);
+            // pass score to win page
             ViewBag.GameStatus = score;
             return View();
         }
@@ -163,8 +166,11 @@ namespace CST350_Milestone.Controllers
         // lose section
         public IActionResult LosePage()
         {
+            // calculate socre
             int elapsedTime = GetElapsedTime();
+            // call method from game collection class
             int score = gameCollection.CalculateGameScore(elapsedTime);
+            // pass score to lose page
             ViewBag.GameStatus = score;
             return View();
         }
@@ -175,9 +181,11 @@ namespace CST350_Milestone.Controllers
         /// <returns></returns>
         public int GetElapsedTime()
         {
+            // Retrieve the start time from session as a DateTime object
             DateTime? startTime = HttpContext.Session.GetObjectFromJson<DateTime?>("StartTime");
             if (startTime.HasValue)
             {
+                // Calculate the difference in seconds
                 TimeSpan elapsed = DateTime.Now - startTime.Value;
                 return (int)elapsed.TotalSeconds;
             }

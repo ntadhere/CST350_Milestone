@@ -94,25 +94,33 @@ namespace CST350_Milestone.Services.Business
         /// </summary>
         public void CalculateLiveNeighbors()
         {
+            // Iterate through all rows of the board
             for (int i = 0; i < board.Size; i++)
             {
+                // Iterate through all columns of the board
                 for (int j = 0; j < board.Size; j++)
                 {
+                    // Get the current cell at position (i, j)
                     var currentCell = board.TheGrid[i, j];
 
+                    // If the current cell is alive (a bomb), it has 9 neighbors
                     if (currentCell.IsLive)
                     {
                         currentCell.NumNeighbors = 9; // Bombs have 9 neighbors
                     }
                     else
                     {
+                        // For non-live cells, check the 8 surrounding cells (neighbors)
                         for (int r = -1; r <= 1; r++)
                         {
                             for (int c = -1; c <= 1; c++)
                             {
+                                // Check if the neighbor is within the bounds of the grid
                                 if (IsSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) &&
+                                    // Check if the neighboring cell is alive
                                     board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
                                 {
+                                    // Increment the number of neighbors if the adjacent cell is alive
                                     currentCell.NumNeighbors++;
                                 }
                             }
@@ -142,7 +150,7 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Calculates the final score based on elapsed time and difficulty.
+        /// Calculates the final score based on elapsed time.
         /// </summary>
         /// <param name="elapsedTime">Elapsed time during the game</param>
         /// <returns>The calculated score</returns>
