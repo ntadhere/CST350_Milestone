@@ -196,8 +196,5 @@ namespace CST350_Milestone.Controllers
             return 0;
         }
 
-        // call when cell is clicked
-
-
     }
 }
