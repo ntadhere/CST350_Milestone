@@ -92,7 +92,7 @@ namespace CST350_Milestone.Controllers
                     // Pass a flag to the view to show "You Lose" message
                     HttpContext.Session.SetString("GameStatus", "You Lose");
                     ViewBag.GameStatus = "You lose!";
-                    return View("LosePage");
+                    return RedirectToAction("LosePage");
                 }
                 else
                 {
@@ -101,17 +101,28 @@ namespace CST350_Milestone.Controllers
                     if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
                     {
                         gameCollection.FloodFill(row, col);
+
+                        // If it's not a bomb, set this cell to visited
+                        gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
+                        return View("Index", gameCollection.Board);
                     }
 
-                    // If it's not a bomb, set this cell to visited
-                    gameCollection.Board.TheGrid[row, col].IsVisited = true;
+                    
 
                     // Check for win condition after this click
                     if (gameCollection.IsWin())
                     {
                         HttpContext.Session.SetString("GameStatus", "You Win");
                         ViewBag.GameStatus = "You win!";
-                        return View("WinPage");
+                        return RedirectToAction("WinPage");
+                    }
+
+                    else
+                    {
+                        // Pass the gameCollection back to the view
+                        //return View("Index", gameCollection.Board);
+                        return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
                     }
                 }
 
@@ -120,9 +131,7 @@ namespace CST350_Milestone.Controllers
             // Save the updated game state to the session
             HttpContext.Session.SetObjectAsJson("GameCollection", gameCollection);
             ViewBag.GameStatus = HttpContext.Session.GetString("GameStatus") ?? "Game in Progress";
-            // Pass the gameCollection back to the view
-            //return View("Index", gameCollection.Board);
-            return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+            
         }
 
         public IActionResult HandleButtonClick(int cellNumber)

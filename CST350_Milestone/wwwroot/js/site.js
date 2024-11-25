@@ -62,11 +62,19 @@ $(function () {
             // Send data to the server, specificly the "buttonNumber as a key-value pair"
             data: { "cellNumber": cellNumber },
             // Define a callback function to handle a successful response
+            // Define a callback function to handle a successful response
             success: function (data) {
-                // Log the response to the console
-                console.log(data);
-                // Update the HTML content of the element with ID
-                $("#" + cellNumber).html(data);
+                if (data.redirectUrl) {
+                    // Redirect to the URL specified in the response
+                    window.location.href = data.redirectUrl;
+                } else if (data.html) {
+                    // Update the HTML content of the element with ID matching cellNumber
+                    $("#" + cellNumber).html(data.html);
+                }
+            },
+            // Handle errors (optional)
+            error: function (xhr, status, error) {
+                console.error("AJAX request failed:", error);
             }
         });
     }
