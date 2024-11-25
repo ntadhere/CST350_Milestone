@@ -30,6 +30,10 @@ namespace CST350_Milestone.Controllers
                 HttpContext.Session.SetObjectAsJson("Board", board);
                 HttpContext.Session.SetObjectAsJson("GameStatus", "Game in Progress");
 
+                // Results
+                int calc = gameCollection.ScoreCalculator(difficulty.Value, boardSize.Value);
+                ViewBag.Calc = calc;
+
                 return View("Index", board);
             }
 
@@ -109,7 +113,7 @@ namespace CST350_Milestone.Controllers
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
 
-
+           
             // Check if the clicked cell is a bomb
             if (gameCollection.Board.TheGrid[row, col].IsLive)
             {
@@ -191,5 +195,6 @@ namespace CST350_Milestone.Controllers
             }
             return 0;
         }
+
     }
 }
