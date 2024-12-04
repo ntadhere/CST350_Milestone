@@ -158,5 +158,17 @@ namespace CST350_Milestone.Services.Business
         {
             return Math.Max(elapsedTime, 0);
         }
+
+        /// <summary>
+        /// Calculates score of the difficulty & boardsize
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <param name="boardSize"></param>
+        /// <returns></returns>
+        public int ScoreCalculator(int difficulty, int boardSize)
+        {
+            int score = (boardSize * difficulty);
+            return Math.Max(score, 0);
+        }
     }
 }
