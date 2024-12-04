@@ -57,25 +57,38 @@ $(function () {
             datatype: "json",
             // Use the 'POST'method for the request
             method: "POST",
-            // Set the url for the request using the value passed in 
+            // Set the url for the request using the value passed in
             url: urlString,
             // Send data to the server, specificly the "buttonNumber as a key-value pair"
             data: { "cellNumber": cellNumber },
-            // Define a callback function to handle a successful response
-            // Define a callback function to handle a successful response
+            //Define a callback function to handle a successful response
+            //success: function (data) {
+            //    // Log the response to the console
+            //    console.log(data);
+            //    if (data.redirectUrl) {
+            //            // Redirect to the URL specified in the response
+            //            window.location.href = data.redirectUrl;
+            //        }
+            //    // Update the HTML content of the element with ID
+            //    $("#" + cellNumber).html(data);
+            //},
+
             success: function (data) {
                 if (data.redirectUrl) {
                     // Redirect to the URL specified in the response
                     window.location.href = data.redirectUrl;
-                } else if (data.html) {
+                } else {
                     // Update the HTML content of the element with ID matching cellNumber
-                    $("#" + cellNumber).html(data.html);
+                    $("#" + cellNumber).html(data);
                 }
             },
-            // Handle errors (optional)
+            //Handle errors (optional)
             error: function (xhr, status, error) {
                 console.error("AJAX request failed:", error);
             }
         });
     }
+
+
+
 }); //End Main Function

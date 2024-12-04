@@ -4,7 +4,7 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<button class="game-button" type="submit" value="@Model.Id" name="cellNumber" asp-controller="Game" asp-action="ShowOneButton">
+<button class="game-button" type="submit" value="@Model.Id" id="@Model.Id" name="cellNumber" asp-controller="Game" asp-action="ShowOneButton">
     @* Check if the cell has been visited *@
     @if (Model.IsVisited)
     {
