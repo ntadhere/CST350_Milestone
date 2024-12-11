@@ -169,5 +169,26 @@ namespace CST350_Milestone.Services.Business
             }
             return false;
         }
+
+        /// <summary>
+        /// Save the game state to the database
+        /// </summary>
+        /// <param name="userId">The ID of the user saving the game</param>
+        /// <param name="gameDataJson">The serialized game state</param>
+        /// <returns></returns>
+        public bool SaveGame(int userId, string gameDataJson)
+        {
+            try
+            {
+                // Call the DAO to save the game
+                return _users.SaveGame(userId, gameDataJson);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving game: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

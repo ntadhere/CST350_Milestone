@@ -22,5 +22,11 @@
     </div>
 </form>
 
+<!-- Add a Save Game button -->
+<form asp-action="SaveGame" method="post">
+    <button type="submit">Save Game</button>
+</form>
+
+
 @* Display the game's current status (win, loss, etc.) *@
 <h2>Results: @ViewBag.GameStatus</h2>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Text.Json;
 
@@ -140,6 +141,62 @@ namespace CST350_Milestone.Controllers
         //Action method to process left mouse clicks
         //If the cell has flag, the cell will not response to the left-click events
         // If the cell does not has flag, we will show the number of neighbors
+        //public IActionResult ShowOneButton(int cellNumber)
+        //{
+        //    // Calculate row and column based on cellNumber
+        //    int row = cellNumber / gameCollection.Board.Size;
+        //    int col = cellNumber % gameCollection.Board.Size;
+
+        //    // check if there is a flag already in the cell, the cell will not response to the left-click events
+        //    if (gameCollection.Board.TheGrid[row, col].IsFlag == true)
+        //    {
+        //        return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+        //    }
+
+        //    else if (gameCollection.Board.TheGrid[row, col].IsLive)
+        //    {
+        //        // Reveal the entire board
+        //        foreach (var cell in gameCollection.Board.TheGrid)
+        //        {
+        //            cell.IsVisited = true;
+        //        }
+        //        // Pass a flag to the view to show "You Lose" message
+        //        HttpContext.Session.SetString("GameStatus", "You Lose");
+        //        ViewBag.GameStatus = "You lose!";
+        //        return RedirectToAction("LosePage");
+        //    }
+        //    else if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+        //    {
+        //        gameCollection.FloodFill(row, col);
+        //        Thread.Sleep(800);
+
+        //        // If it's not a bomb, set this cell to visited
+        //        //gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
+        //        return View("Index", gameCollection.Board);
+
+        //    }
+        //    else
+        //    {
+        //        return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+        //        //return RedirectToAction("LosePage");
+
+
+        //    }
+
+        //    // Check for win condition after this click
+        //    if (gameCollection.IsWin())
+        //    {
+        //        HttpContext.Session.SetString("GameStatus", "You Win");
+        //        ViewBag.GameStatus = "You win!";
+        //        return RedirectToAction("WinPage");
+        //    }
+
+        //}
+
+        // Action method to process left mouse clicks
+        // If the cell has flag, the cell will not response to the left-click events
+        // If the cell does not has flag, we will show the number of neighbors
         public IActionResult ShowOneButton(int cellNumber)
         {
             // Calculate row and column based on cellNumber
@@ -151,53 +208,58 @@ namespace CST350_Milestone.Controllers
             {
                 return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
             }
-
-            else if (gameCollection.Board.TheGrid[row, col].IsLive)
-            {
-                // Reveal the entire board
-                foreach (var cell in gameCollection.Board.TheGrid)
-                {
-                    cell.IsVisited = true;
-                }
-                // Pass a flag to the view to show "You Lose" message
-                HttpContext.Session.SetString("GameStatus", "You Lose");
-                ViewBag.GameStatus = "You lose!";
-                return RedirectToAction("LosePage");
-            }
-            else if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
-            {
-                gameCollection.FloodFill(row, col);
-                Thread.Sleep(1000);
-
-                // If it's not a bomb, set this cell to visited
-                gameCollection.Board.TheGrid[row, col].IsVisited = true;
-
-                return View("Index", gameCollection.Board);
-
-            }
             else
             {
-                return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
-                //return RedirectToAction("LosePage");
+                // Check if the clicked cell is a bomb
+                if (gameCollection.Board.TheGrid[row, col].IsLive)
+                {
+                    // Reveal the entire board
+                    foreach (var cell in gameCollection.Board.TheGrid)
+                    {
+                        cell.IsVisited = true;
+                    }
+                    // Pass a flag to the view to show "You Lose" message
+                    HttpContext.Session.SetString("GameStatus", "You Lose");
+                    ViewBag.GameStatus = "You lose!";
+                    return RedirectToAction("LosePage");
+                }
+                else
+                {
+                    // FloodFill for 0
+                    // If clicked cell has no neighboring boms, trigger flood fill
+                    if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
+                    {
+                        gameCollection.FloodFill(row, col);
+                        Thread.Sleep(800);
 
+
+                        // If it's not a bomb, set this cell to visited
+                        gameCollection.Board.TheGrid[row, col].IsVisited = true;
+
+                        return View("Index", gameCollection.Board);
+                    }
+
+
+
+                    // Check for win condition after this click
+                    if (gameCollection.IsWin())
+                    {
+                        HttpContext.Session.SetString("GameStatus", "You Win");
+                        ViewBag.GameStatus = "You win!";
+                        return RedirectToAction("WinPage");
+                    }
+
+                    else
+                    {
+                        // Pass the gameCollection back to the view
+                        //return View("Index", gameCollection.Board);
+                        return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
+                    }
+                }
 
             }
 
-            //    // Check for win condition after this click
-            //    if (gameCollection.IsWin())
-            //    {
-            //        HttpContext.Session.SetString("GameStatus", "You Win");
-            //        ViewBag.GameStatus = "You win!";
-            //        return RedirectToAction("WinPage");
-            //    }
-
-            //}
-
         }
-
-
-
-
 
         public IActionResult HandleButtonClick(int cellNumber)
         {
@@ -299,5 +361,45 @@ namespace CST350_Milestone.Controllers
             }
             return 0;
         }
+
+        [HttpPost]
+        public IActionResult SaveGame()
+        {
+            // Get the current game state
+            var gameCollection = HttpContext.Session.GetObjectFromJson<GameCollection>("GameCollection");
+
+            if (gameCollection == null)
+            {
+                Console.WriteLine("Game data is null.");
+                ViewBag.Message = "No game data to save.";
+                return RedirectToAction("Index");
+            }
+
+            // Serialize the game state into JSON
+            string gameDataJson = JsonSerializer.Serialize(gameCollection);
+
+            // Simulate a UserId (replace with actual user logic if you have authentication implemented)
+            int userId = 1; // Replace with actual authenticated user ID
+
+            Console.WriteLine($"Saving game for UserId: {userId} with data: {gameDataJson}");
+
+            // Call the business layer to save the game
+            bool isSaved = gameCollection.SaveGame(userId, gameDataJson);
+
+            if (isSaved)
+            {
+                Console.WriteLine("Game saved successfully.");
+                ViewBag.Message = "Game saved successfully!";
+            }
+            else
+            {
+                Console.WriteLine("Failed to save game.");
+                ViewBag.Message = "Failed to save game.";
+            }
+
+            return RedirectToAction("Index");
+        }
+        
+
     }
 }

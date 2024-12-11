@@ -1,4 +1,5 @@
 ﻿using CST350_Milestone.Models;
+using CST350_Milestone.Services.DataAccess;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
@@ -6,6 +7,8 @@ namespace CST350_Milestone.Services.Business
 {
     public class GameCollection
     {
+        private readonly GameDAO _gameDAO;
+
         // This is an in-memory list of users. Later this will be a db connection.
         private BoardModel board = new BoardModel();
         //private List<CellModel> cells = new List<CellModel>();
@@ -14,6 +17,13 @@ namespace CST350_Milestone.Services.Business
         // without allowing them to modify it directly (since there is no set accessor).
         // It's a way to expose board for read-only access.
         public BoardModel Board => board; //Public getter to expose BoardModel
+
+
+        // Constructor to inject the DAO dependency
+        public GameCollection()
+        {
+            _gameDAO = new GameDAO();
+        }
 
         /// <summary>
         /// This method help to generate a new board for game then return the model
@@ -207,6 +217,26 @@ namespace CST350_Milestone.Services.Business
         {
             int score = (boardSize * difficulty * 100) + elapsedTime;
             return Math.Max(score, 0);
+        }
+
+        /// <summary>
+        /// Save the game state to the database
+        /// </summary>
+        /// <param name="userId">The ID of the user saving the game</param>
+        /// <param name="gameDataJson">The serialized game state</param>
+        /// <returns></returns>
+        public bool SaveGame(int userId, string gameDataJson)
+        {
+            try
+            {
+                // Call the DAO to save the game
+                return _gameDAO.SaveGame(userId, gameDataJson);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving game: {ex.Message}");
+                return false;
+            }
         }
     }
 }
