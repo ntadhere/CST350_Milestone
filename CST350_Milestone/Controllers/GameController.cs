@@ -9,6 +9,8 @@ using System.Linq;
 
 namespace CST350_Milestone.Controllers
 {
+   // [ApiController]
+    //[Route("api/[controller]")]
     public class GameController : Controller
     {
         private static GameCollection gameCollection = new GameCollection(); // **gameDAO?**
@@ -20,6 +22,53 @@ namespace CST350_Milestone.Controllers
         //{
         //    _gameCollection = gameCollection;
         //}
+
+        private readonly GameService _gameService;
+
+        // Constructor to initialize the GameService with connection string
+        public GameController()
+        {
+            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=GameDB;Integrated Security=True;";
+            _gameService = new GameService(connectionString);
+        }
+
+        // POST: api/game/save
+        [HttpPost("save")]
+        public ActionResult SaveGame([FromBody] GameModel game)
+        {
+            if (game == null)
+            {
+                return BadRequest("Game data is null.");
+            }
+
+            bool isSaved = _gameService.SaveGame(game);
+
+            if (isSaved)
+            {
+                return Ok("Game saved successfully.");
+            }
+            else
+            {
+                return StatusCode(500, "An error occurred while saving the game.");
+            }
+        }
+
+        // GET: api/game/load/{userId}
+      //  [HttpGet("load/{userId}")]
+        [HttpGet("loadGame")]
+        public ActionResult LoadGame(int userId)
+        {
+            var game = _gameService.LoadGame(userId);
+
+            if (game != null)
+            {
+                return Ok(game);
+            }
+            else
+            {
+                return NotFound("No game found for the specified user.");
+            }
+        }
 
         public IActionResult Index()
         {
@@ -205,17 +254,7 @@ namespace CST350_Milestone.Controllers
             return 0;
         }
 
-        // SaveGame!!**
-        //[HttpPost]
-        //public IActionResult SaveGame(string gameData)
-        //{
-        //    int userId = int.Parse(HttpContext.Session.GetString("UserId"));
-        //    var game = _gameCollection.LoadGame(userId);
-        //    if (game != null)
-        //    {
-        //        return Json(new {success = true, data = game.GameData});
-        //    }
-        //    return Json(new { success = true });
-        //}
+        
+
     }
 }

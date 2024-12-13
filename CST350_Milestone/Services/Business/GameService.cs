@@ -7,17 +7,44 @@ namespace CST350_Milestone.Services.Business
     public class GameService
     {
         //private GameCollection _gameCollection;
-        //private GameDAO gameDAO;
+        private GameDAO _gameDAO;
 
-        //public GameService()
+        //public GameService(string connectionString)
         //{
-        //    _gameCollection = new GameCollection();  // gameDAO??**
+        //    _gameDAO = new GameCollection(connectionString);  // gameDAO??**
         //}
         private GameCollection _gameCollection;
 
-        public GameService()
+        public GameService(string connectionString)
         {
-            _gameCollection = new GameCollection();
+            _gameDAO = new GameDAO(connectionString);
+        }
+
+        // Method to save a game
+        public bool SaveGame(GameModel game)
+        {
+            try
+            {
+                _gameDAO.saveGame(game);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false; // Handle exceptions as needed
+            }
+        }
+
+        // Method to load a game
+        public GameModel LoadGame(int userId)
+        {
+            try
+            {
+                return _gameDAO.LoadGame(userId);
+            }
+            catch (Exception)
+            {
+                return null; // Handle exceptions as needed
+            }
         }
 
         // Initialize the board and set up game settings

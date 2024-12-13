@@ -13,6 +13,51 @@ namespace CST350_Milestone.Services.Business
         // Public getter for the board to expose it for read-only access
         public BoardModel Board => board;
 
+        private List<GameModel> _games;
+
+        public GameCollection()
+        {
+            _games = new List<GameModel>();
+        }
+
+        // Add a game to the collection
+        public void AddGame(GameModel game)
+        {
+            _games.Add(game);
+        }
+
+        // Remove a game from the collection
+        public void RemoveGame(GameModel game)
+        {
+            _games.Remove(game);
+        }
+
+        // Get a game by its ID
+        public GameModel GetGameById(int id)
+        {
+            return _games.Find(game => game.Id == id);
+        }
+
+        // Get all games for a user
+        public List<GameModel> GetGamesByUserId(int userId)
+        {
+            return _games.FindAll(game => game.UserId == userId);
+        }
+
+        // Get the latest game for a user
+        public GameModel GetLatestGame(int userId)
+        {
+            return _games.FindAll(game => game.UserId == userId)
+                         .OrderByDescending(game => game.DateSaved)
+                         .FirstOrDefault();
+        }
+
+        // Get all games in the collection
+        public List<GameModel> GetAllGames()
+        {
+            return _games;
+        }
+
         //private GameDAO _gameDAO;   // **extra one?
 
         // Game Collection**!!
@@ -184,36 +229,6 @@ namespace CST350_Milestone.Services.Business
             return Math.Max(score, 0);
         }
 
-
-        //// **Save Game Goes HERE!!!**
-        //public void SaveGame(int userId, string gameData)
-        //{
-        //    if (userId <= 0 || string.IsNullOrEmpty(gameData))
-        //        throw new ArgumentException("Invalid userId or gameData");
-
-        //    var game = new GameModel
-        //    {
-        //        UserId = userId,
-        //        DateSaved = DateTime.Now,
-        //        GameData = gameData,
-        //    };
-        //    _gameDAO.saveGame(game);
-        //}
-
-        //// **Load Game Goes HERE!!**
-        //public GameModel LoadGame(int userId)
-        //{
-        //    try
-        //    {
-        //        return _gameDAO.LoadGame(userId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error loading game: {ex.Message}");
-        //        return null;
-        //    }
-
-        //}
 
     }
 }

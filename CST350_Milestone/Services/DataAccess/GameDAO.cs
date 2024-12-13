@@ -7,7 +7,7 @@ namespace CST350_Milestone.Services.DataAccess
     public class GameDAO
     {
         // public or static?**
-        public string connectionString = ""; // DON'T FORGET STRING CONNECTION GOES HERE!!!
+        public string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=GameDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // DON'T FORGET STRING CONNECTION GOES HERE!!!
 
         public GameDAO(string connectionString)
         {
@@ -20,11 +20,21 @@ namespace CST350_Milestone.Services.DataAccess
             using(var connection = new SqlConnection(connectionString))
             {
                 // RE-CHECK QUERY!!!***
-                string query = "SELECT Games (UserId, DateSaved, GameData) VALUES (@UserId, @DateSaved, @GameData)";
+                // Add or AddWithValue?
+                string query = "INSERT INTO Games (UserId, DateSaved, GameData) VALUES (@UserId, @DateSaved, @GameData)";
                 var command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@UserId", game.UserId);
                 command.Parameters.AddWithValue("@DateSaved", game.DateSaved);
-                command.Parameters.AddWithValue("@GameData", game.GameData);
+
+                if (game.GameData == null )
+                {
+                    command.Parameters.AddWithValue("@GameData", DBNull.Value);    // GameData? DBNull?**
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@GameData", game.GameData);
+                }
+
 
                 connection.Open();
                 command.ExecuteNonQuery();
@@ -50,8 +60,8 @@ namespace CST350_Milestone.Services.DataAccess
                     {
                         Id = (int)reader["Id"],
                         UserId = (int)reader["UserId"],
-                        DateSaved = (DateTime)reader["DataSaved"],
-                        GameData = (string)reader["GameData"]
+                        DateSaved = (DateTime)reader["DateSaved"],
+                        GameData = reader["GameData"] == DBNull.Value ? null : (string)reader["GameData"]   // string
                     };
                 }
                 return null;
