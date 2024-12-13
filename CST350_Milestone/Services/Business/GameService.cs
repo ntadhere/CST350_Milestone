@@ -1,10 +1,18 @@
 ﻿using CST350_Milestone.Models;
+using CST350_Milestone.Services.DataAccess;
 using System;
 
 namespace CST350_Milestone.Services.Business
 {
     public class GameService
     {
+        //private GameCollection _gameCollection;
+        //private GameDAO gameDAO;
+
+        //public GameService()
+        //{
+        //    _gameCollection = new GameCollection();  // gameDAO??**
+        //}
         private GameCollection _gameCollection;
 
         public GameService()

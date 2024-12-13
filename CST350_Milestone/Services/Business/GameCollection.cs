@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System;
+using CST350_Milestone.Services.DataAccess;
 
 namespace CST350_Milestone.Services.Business
 {
@@ -11,6 +12,18 @@ namespace CST350_Milestone.Services.Business
 
         // Public getter for the board to expose it for read-only access
         public BoardModel Board => board;
+
+        //private GameDAO _gameDAO;   // **extra one?
+
+        // Game Collection**!!
+        //public GameCollection(GameDAO gameDAO)
+        //{
+        //    _gameDAO = gameDAO;
+        //}
+
+        //public GameCollection()
+        //{
+        //}
 
         /// <summary>
         /// Generates a new game board with the specified size and initializes the grid.
@@ -170,5 +183,37 @@ namespace CST350_Milestone.Services.Business
             int score = (boardSize * difficulty);
             return Math.Max(score, 0);
         }
+
+
+        //// **Save Game Goes HERE!!!**
+        //public void SaveGame(int userId, string gameData)
+        //{
+        //    if (userId <= 0 || string.IsNullOrEmpty(gameData))
+        //        throw new ArgumentException("Invalid userId or gameData");
+
+        //    var game = new GameModel
+        //    {
+        //        UserId = userId,
+        //        DateSaved = DateTime.Now,
+        //        GameData = gameData,
+        //    };
+        //    _gameDAO.saveGame(game);
+        //}
+
+        //// **Load Game Goes HERE!!**
+        //public GameModel LoadGame(int userId)
+        //{
+        //    try
+        //    {
+        //        return _gameDAO.LoadGame(userId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error loading game: {ex.Message}");
+        //        return null;
+        //    }
+
+        //}
+
     }
 }

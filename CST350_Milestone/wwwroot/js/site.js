@@ -71,3 +71,35 @@ $(function () {
         });
     }
 }); //End Main Function
+
+// Save Game function
+function saveGame() {
+    const gameData = JSON.stringify(getGameState());
+    fetch('/Game/SaveGame', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ gameData: gameData })
+    }).then(response => response.json())
+        .then(data => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Game saved successfully!')
+            }
+        });
+}
+
+// Load Game function
+function loadGame() {
+    fetch('Game/LoadGame')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                setGameState(JSON.parse(data.data));
+            }
+            else {
+                alert('No saved game found.');
+            }
+        });
+}

@@ -1,6 +1,7 @@
 ﻿using CST350_Milestone.Filter;
 using CST350_Milestone.Models;
 using CST350_Milestone.Services.Business;
+using CST350_Milestone.Services.DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,7 +11,15 @@ namespace CST350_Milestone.Controllers
 {
     public class GameController : Controller
     {
-        private static GameCollection gameCollection = new GameCollection();
+        private static GameCollection gameCollection = new GameCollection(); // **gameDAO?**
+        //private static GameDAO gameDAO; // extra one?
+        //private readonly GameCollection _gameCollection;    // extra one?
+
+        //// GameController!!
+        //private GameController(GameCollection gameCollection)
+        //{
+        //    _gameCollection = gameCollection;
+        //}
 
         public IActionResult Index()
         {
@@ -196,5 +205,17 @@ namespace CST350_Milestone.Controllers
             return 0;
         }
 
+        // SaveGame!!**
+        //[HttpPost]
+        //public IActionResult SaveGame(string gameData)
+        //{
+        //    int userId = int.Parse(HttpContext.Session.GetString("UserId"));
+        //    var game = _gameCollection.LoadGame(userId);
+        //    if (game != null)
+        //    {
+        //        return Json(new {success = true, data = game.GameData});
+        //    }
+        //    return Json(new { success = true });
+        //}
     }
 }
