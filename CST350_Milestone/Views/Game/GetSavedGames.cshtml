@@ -13,34 +13,34 @@
             <th>
                 @Html.DisplayNameFor(model => model.DateSaved)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.GameData)
+            @*             <th>
+            @Html.DisplayNameFor(model => model.GameData)
             </th> *@
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateSaved)
-            </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.GameData)
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateSaved)
+                </td>
+                @*             <td>
+            @Html.DisplayFor(modelItem => item.GameData)
             </td> *@
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                <td>              
+                    <button class="btn btn-primary load-saved-game" data-id="@item.Id">Load Saved Game</button>
                     <button class="btn btn-danger delete-game" data-id="@item.Id">Delete</button>
 
                 </td>
-        </tr>
-}
+            </tr>
+        }
     </tbody>
 </table>

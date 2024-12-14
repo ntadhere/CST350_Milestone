@@ -43,15 +43,28 @@
         }
     });
 
-    //// Attach an event listener to the "Show Saved Games" button
-    //$("#show-saved-game").on("click", function () {
-    //    fetch('/Game/GetSavedGames')
-    //        .then(response => response.text())
-    //        .then(data => {
-    //            $("#saved-games-zone").html(data); // Load partial view into the container
-    //        })
-    //        .catch(error => console.error('Error fetching saved games:', error));
-    //});
+    // Handle "Load Saved Game" button click
+    $(document).on("click", ".load-saved-game", function () {
+        var gameId = $(this).data("id"); // Get the game ID from the button's data-id attribute
+
+        $.ajax({
+            url: '/Game/LoadSavedGame', // URL of the LoadSavedGame action
+            method: 'POST',
+            data: { id: gameId }, // Send the game ID to the server
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // CSRF token
+            },
+            success: function (response) {
+                // Replace the game zone with the new gameboard partial view
+                $("#game-zone").html(response);
+                alert("Game loaded successfully!");
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading game:", error);
+                alert("An unexpected error occurred. Please try again.");
+            }
+        });
+    });
 
     // Handle Load Saved Games button click using event delegation
     $(document).on("click", "#show-saved-game", function () {
