@@ -158,5 +158,17 @@ namespace CST350_Milestone.Services.Business
             return userDao.SaveGameState(userId, gameDataJson);
         }
 
+        public List<SavedGameModel> GetAllSavedGame ()
+        {
+            UserDAO userDAO = new UserDAO();
+            return userDAO.GetAllSavedGames();
+        }
+
+        public bool DeleteGameById(int id)
+        {
+            UserDAO userDAO = new UserDAO();
+            return userDAO.DeleteGameById(id);
+        }
+
     }
 }

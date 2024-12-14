@@ -43,6 +43,55 @@
         }
     });
 
+    //// Attach an event listener to the "Show Saved Games" button
+    //$("#show-saved-game").on("click", function () {
+    //    fetch('/Game/GetSavedGames')
+    //        .then(response => response.text())
+    //        .then(data => {
+    //            $("#saved-games-zone").html(data); // Load partial view into the container
+    //        })
+    //        .catch(error => console.error('Error fetching saved games:', error));
+    //});
+
+    // Handle Load Saved Games button click using event delegation
+    $(document).on("click", "#show-saved-game", function () {
+        fetch('/Game/GetSavedGames')
+            .then(response => response.text())
+            .then(data => {
+                $("#saved-games-zone").html(data); // Update the saved games table
+            })
+            .catch(error => console.error('Error loading saved games:', error));
+    });
+
+    // Handle Delete button click
+    $(document).on("click", ".delete-game", function () {
+        var gameId = $(this).data("id"); // Get the game ID from the button's data-id attribute
+
+        if (confirm("Are you sure you want to delete this game?")) {
+            $.ajax({
+                url: '/Game/DeleteGameById', // URL of the Delete action
+                method: 'POST',
+                data: { id: gameId }, // Send the game ID to the server
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // CSRF token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Remove the deleted game's row from the table
+                        $("#game-row-" + gameId).remove();
+                        alert(response.message); // Show success message
+                    } else {
+                        alert(response.message); // Show failure message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting game:", error);
+                    alert("An unexpected error occurred. Please try again.");
+                }
+            });
+        }
+    });
+
     // Prevent the context menu from showing up on right-click
     $(document).bind("contextmenu", function (event) {
         event.preventDefault();

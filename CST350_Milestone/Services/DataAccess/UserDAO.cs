@@ -20,6 +20,14 @@ namespace CST350_Milestone.Services.DataAccess
         // Declare and Initiallize
         string query = "";
 
+
+        //==============================================================
+        //==============================================================
+        //======================= USER  SECTION ========================
+        //==============================================================
+        //==============================================================
+
+
         /// <summary>
         /// add the new user to the db
         /// </summary>
@@ -91,39 +99,7 @@ namespace CST350_Milestone.Services.DataAccess
             }
         } // End AddUser method
 
-        public bool SaveGameState(int userId, string gameDataJson)
-        {
-            try
-            {
-                // Establish a new SQL connection using the provided connection string.
-                using (SqlConnection connection = new SqlConnection(conn))
-                {
-                    connection.Open();
 
-                    // Step 2: If the user does not exist, proceed with the insertion
-                    // Replaced Player with MilestoneUser
-                    string query = @"INSERT INTO Games (UserId, DateSaved, GameData)
-                  VALUES (@UserId, GETDATE(), @GameData);
-                  SELECT SCOPE_IDENTITY();";
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        // Add parameters to securely pass user input values
-                        command.Parameters.AddWithValue("@UserId", userId);
-                        command.Parameters.AddWithValue("@GameData", gameDataJson);
-
-                        int rowsAffected = command.ExecuteNonQuery();
-                        return rowsAffected > 0;
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving game state: {ex.Message}");
-                return false;
-            }
-        } // End AddUser method
 
 
         public UserModel CheckCredentials(string username, string password)
@@ -383,5 +359,109 @@ namespace CST350_Milestone.Services.DataAccess
                 }
             }
         } // End Get User by ID
+
+
+        //==============================================================
+        //==============================================================
+        //=================== SAVE GAME SECTION ========================
+        //==============================================================
+        //==============================================================
+        public bool SaveGameState(int userId, string gameDataJson)
+        {
+            try
+            {
+                // Establish a new SQL connection using the provided connection string.
+                using (SqlConnection connection = new SqlConnection(conn))
+                {
+                    connection.Open();
+
+                    // Step 2: If the user does not exist, proceed with the insertion
+                    // Replaced Player with MilestoneUser
+                    string query = @"INSERT INTO Games (UserId, DateSaved, GameData)
+                  VALUES (@UserId, GETDATE(), @GameData);
+                  SELECT SCOPE_IDENTITY();";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Add parameters to securely pass user input values
+                        command.Parameters.AddWithValue("@UserId", userId);
+                        command.Parameters.AddWithValue("@GameData", gameDataJson);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving game state: {ex.Message}");
+                return false;
+            }
+        } // End SaveGameState method
+
+        public List<SavedGameModel> GetAllSavedGames()
+        {
+
+            // Create a new instance of the Saved Games list
+            List<SavedGameModel> listSavedGames = new List<SavedGameModel>();
+
+            // Create a database query
+            string sqlStatement = "SELECT * FROM dbo.Games";
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                try
+                {
+                    connection.Open();
+                    // Create a SQL command object using the query and open connection
+                    using (SqlCommand command = new SqlCommand(sqlStatement, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                // Add all the products to the list
+                                listSavedGames.Add(new SavedGameModel((int)reader[0], (string)reader[1], (DateTime)reader[2], (string)reader[3]));
+                            }
+                        }
+                    }
+
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching saved game: {ex.Message}");
+                }
+                return listSavedGames;
+            }
+        }
+
+        public bool DeleteGameById(int id)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(conn))
+                {
+                    connection.Open();
+
+                    string query = "DELETE FROM Games WHERE Id = @Id";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Id", id);
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        return rowsAffected > 0; // Returns true if at least one row is deleted
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting game: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
