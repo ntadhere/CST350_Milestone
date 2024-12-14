@@ -1,37 +1,40 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-$(function () {
+﻿$(function () {
     console.log("Page is ready");
 
-    // JavaScript
-    // Attach an event listener to the entire document for the 'mousedown' event
-    // on elements with the class 'game-button'
-    $(document).on("mousedown", ".game-button", function (event) {
+    // Attach an event listener to the Save button
+    $("#save-game").on("click", function () {
+        fetch('/Game/SaveGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // CSRF Token
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Show success message
+                } else {
+                    alert(data.message); // Show error message
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 
-        // Get the value of the clicked button
+    // Attach an event listener to the entire document for the 'mousedown' event on elements with the class 'game-button'
+    $(document).on("mousedown", ".game-button", function (event) {
         var cellNumber = $(this).val();
 
-        // Use a switch statement to check with mouse button was clicked
         switch (event.which) {
-            // Left Mouse Button
-            case 1:
-                // Log the button number to the console
-                console.log("Cell number " + cellNumber + "  was left clicked.");
-                // Call the function 'doButtonUpdate' with the button number and a specific endpoint
-                doCellUpdate(cellNumber, 'Game/ShowOneButton');
+            case 1: // Left Mouse Button
+                console.log("Cell number " + cellNumber + " was left clicked.");
+                doCellUpdate(cellNumber, 'Game/LeftClickShowOneButton');
                 break;
-            // Middle Mouse Button
-            case 2:
+            case 2: // Middle Mouse Button
                 alert("Middle mouse button clicked");
                 break;
-            // Right Mouse Button
-            case 3:
-                // Log the button number to the console
-                console.log("Cell number " + cellNumber + "  was RIGHT clicked.");
-                // Call the function 'doButtonUpdate' with the button number and a specific endpoint
+            case 3: // Right Mouse Button
+                console.log("Cell number " + cellNumber + " was RIGHT clicked.");
                 doCellUpdate(cellNumber, 'Game/RightClickShowOneButton');
                 break;
             default:
@@ -40,55 +43,31 @@ $(function () {
         }
     });
 
-    // Bind a new event to the context menu to prevent the right-click menu
-    // from appearing
-    // Whenever the context menu shows up call this fuction
+    // Prevent the context menu from showing up on right-click
     $(document).bind("contextmenu", function (event) {
-        // Stop the right click menuu from showing up
         event.preventDefault();
         console.log("Right Click. Prevented context menu");
     });
 
-    // Define the function 'doButtonUpdate' that takes two parameters: 'buttonNumber' and 'urlString'
+    // Define the function to update a cell
     function doCellUpdate(cellNumber, urlString) {
-        // Make an AJAX request using jQuery
         $.ajax({
-            // Set the expeected data type to 'json' for the responese
-            datatype: "json",
-            // Use the 'POST'method for the request
-            method: "POST",
-            // Set the url for the request using the value passed in
-            url: urlString,
-            // Send data to the server, specificly the "buttonNumber as a key-value pair"
-            data: { "cellNumber": cellNumber },
-            //Define a callback function to handle a successful response
-            //success: function (data) {
-            //    // Log the response to the console
-            //    console.log(data);
-            //    if (data.redirectUrl) {
-            //            // Redirect to the URL specified in the response
-            //            window.location.href = data.redirectUrl;
-            //        }
-            //    // Update the HTML content of the element with ID
-            //    $("#" + cellNumber).html(data);
-            //},
-
+            datatype: "html", // Expect HTML or JSON response from the server
+            method: "POST",   // Use POST method
+            url: urlString,   // Endpoint URL
+            data: { "cellNumber": cellNumber }, // Send cellNumber to the server
             success: function (data) {
                 if (data.redirectUrl) {
-                    // Redirect to the URL specified in the response
                     window.location.href = data.redirectUrl;
+                } else if (data.includes("id=\"game-zone\"")) {
+                    $("#game-zone").html(data); // Update the entire game board
                 } else {
-                    // Update the HTML content of the element with ID matching cellNumber
-                    $("#" + cellNumber).html(data);
+                    $("#" + cellNumber).html(data); // Update a specific cell
                 }
             },
-            //Handle errors (optional)
             error: function (xhr, status, error) {
                 console.error("AJAX request failed:", error);
             }
         });
     }
-
-
-
-}); //End Main Function
+}); // End Main Function

@@ -1,32 +1,18 @@
 ﻿@model CST350_Milestone.Models.BoardModel
 
-@{
-    // Calculate the total number of cells based on the board's size (assuming a square board).
-    int totalCel = Model.Size * Model.Size;
-}
 @* Surround the entire board with a form that can be submitted *@
 
 <h1>LET'S PLAY</h1>
 
+    <button id="save-game" class="btn btn-primary">Save</button>
 
-<form action="/" method="post" class="game-zone">
-    <div class="button-zone" style="--button-count: @Model.Size;">
-        @* Iterate over the buttons and display them *@
-
-        @for (int i = 0; i < totalCel; i++)
-        {
-            <div id="@i">
-                @Html.Partial("ShowOneButton", @Model.CellListData[i])
-            </div>
-        }
-    </div>
-</form>
-
-<!-- Add a Save Game button -->
-<form asp-action="SaveGame" method="post">
-    <button type="submit">Save Game</button>
-</form>
+<div id="game-zone">
+    @Html.Partial("GameBoard", Model)
+</div>
 
 
 @* Display the game's current status (win, loss, etc.) *@
-<h2>Results: @ViewBag.GameStatus</h2>
+@* Change GameStatus to score? *@
+@* <h2>Results: @ViewBag.GameStatus</h2> *@
+
+

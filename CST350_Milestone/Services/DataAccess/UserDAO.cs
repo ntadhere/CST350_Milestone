@@ -1,6 +1,7 @@
 ﻿using CST350_Milestone.Interface;
 using CST350_Milestone.Models;
 using System.Data.SqlClient;
+using System.Linq.Expressions;
 
 namespace CST350_Milestone.Services.DataAccess
 {
@@ -13,7 +14,7 @@ namespace CST350_Milestone.Services.DataAccess
         static string serverName = "localhost";
         static string username = "root";
         static string password = "root";
-        static string dbName = "player";
+        static string dbName = "MilestoneUser";
 
         static string port = "3306";
         // Declare and Initiallize
@@ -87,6 +88,40 @@ namespace CST350_Milestone.Services.DataAccess
                         return 0; // Return 0 to indicate failure
                     }
                 }
+            }
+        } // End AddUser method
+
+        public bool SaveGameState(int userId, string gameDataJson)
+        {
+            try
+            {
+                // Establish a new SQL connection using the provided connection string.
+                using (SqlConnection connection = new SqlConnection(conn))
+                {
+                    connection.Open();
+
+                    // Step 2: If the user does not exist, proceed with the insertion
+                    // Replaced Player with MilestoneUser
+                    string query = @"INSERT INTO Games (UserId, DateSaved, GameData)
+                  VALUES (@UserId, GETDATE(), @GameData);
+                  SELECT SCOPE_IDENTITY();";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Add parameters to securely pass user input values
+                        command.Parameters.AddWithValue("@UserId", userId);
+                        command.Parameters.AddWithValue("@GameData", gameDataJson);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving game state: {ex.Message}");
+                return false;
             }
         } // End AddUser method
 
