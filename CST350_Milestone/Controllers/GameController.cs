@@ -179,5 +179,32 @@ namespace CST350_Milestone.Controllers
             return Json(new { success = false, message = "Failed to save game state." });
         }
 
+
+        public IActionResult GetSavedGames()
+        {
+            return PartialView("GetSavedGames",gameCollection.GetAllSavedGame());
+        }
+
+        [HttpPost]
+        public IActionResult DeleteGameById(int id)
+        {
+            try
+            {
+                if (gameCollection.DeleteGameById(id))
+                {
+                    return Json(new { success = true, message = "Game deleted successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Failed to delete the game." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+
     }
 }

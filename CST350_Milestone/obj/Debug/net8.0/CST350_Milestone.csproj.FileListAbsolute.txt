@@ -721,3 +721,4 @@ C:\Users\dorot\source\repos\GCU\JUNIOR-fall24\CST-350\Workspace\Milestone4\CST35
 C:\Users\dorot\source\repos\GCU\JUNIOR-fall24\CST-350\Workspace\Milestone4\CST350_Milestone\obj\Debug\net8.0\CST350_Milestone.pdb
 C:\Users\dorot\source\repos\GCU\JUNIOR-fall24\CST-350\Workspace\Milestone4\CST350_Milestone\obj\Debug\net8.0\CST350_Milestone.genruntimeconfig.cache
 C:\Users\dorot\source\repos\GCU\JUNIOR-fall24\CST-350\Workspace\Milestone4\CST350_Milestone\obj\Debug\net8.0\ref\CST350_Milestone.dll
+C:\Users\dorot\source\repos\GCU\JUNIOR-fall24\CST-350\Workspace\Milestone4\CST350_Milestone\obj\Debug\net8.0\CST350_Milestone.sourcelink.json

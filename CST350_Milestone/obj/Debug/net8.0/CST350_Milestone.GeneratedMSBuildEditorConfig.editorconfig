@@ -30,8 +30,16 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZVxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/dorot/source/repos/GCU/JUNIOR-fall24/CST-350/Workspace/Milestone4/CST350_Milestone/Views/Game/DeleteGameMessage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZVxEZWxldGVHYW1lTWVzc2FnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/dorot/source/repos/GCU/JUNIOR-fall24/CST-350/Workspace/Milestone4/CST350_Milestone/Views/Game/GameBoard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZVxHYW1lQm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/dorot/source/repos/GCU/JUNIOR-fall24/CST-350/Workspace/Milestone4/CST350_Milestone/Views/Game/GetSavedGames.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZVxHZXRTYXZlZEdhbWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/dorot/source/repos/GCU/JUNIOR-fall24/CST-350/Workspace/Milestone4/CST350_Milestone/Views/Game/Index.cshtml]

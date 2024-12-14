@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CST350_Milestone")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d44015d8e63718198d64297e6f6a7b84febed82")]
 [assembly: System.Reflection.AssemblyProductAttribute("CST350_Milestone")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CST350_Milestone")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
