@@ -76,18 +76,19 @@ namespace CST350_Milestone.Controllers
         }
 
 
-
-        /// <summary>
-        /// Log user out and remove session
-        /// </summary>
-        /// <returns></returns>
         [SessionCheckFilter]
         public IActionResult Logout()
         {
-            //Remove the ssion
+            // Clear the session for the current user
             HttpContext.Session.Remove("User");
-            return View("Login");
+
+            // Optionally clear other session data if needed
+            HttpContext.Session.Clear();
+
+            // Redirect to login page
+            return RedirectToAction("Index");
         }
+
 
         /// <summary>
         /// Show the Registration Form with all the checkboxes
@@ -145,16 +146,18 @@ namespace CST350_Milestone.Controllers
             // Add the new user to the users collection, typically this is saving the user to a database of in-memory list
             if (users.AddUser(user) > 0)
             {
-                // Success, redirect to success page or display success message
-                // After processing the registration, return the "Index" view to display the login page
+                // Automatically log in the new user by storing them in session
+                HttpContext.Session.SetObjectAsJson("User", user);
+
+                // Redirect to success page or main application
                 return View("RegisterSuccess", user);
             }
             else
             {
-                // Failure, inform the user to re-enter data
-                //ViewBag.ErrorMessage = "Failed to add user. Please re-enter the information and try again.";
-                return View("RegisterFailure"); // Return to the form and show an error message
+                // Registration failure
+                return View("RegisterFailure");
             }
+
         }
     }
 }
