@@ -1,4 +1,5 @@
-﻿using CST350_Milestone.Filter;
+﻿// Importing necessary namespaces
+using CST350_Milestone.Filter;
 using CST350_Milestone.Models;
 using CST350_Milestone.Services.Business;
 using CST350_Milestone.Services.DataAccess;
@@ -11,63 +12,78 @@ namespace CST350_Milestone.Controllers
 {
     public class GameController : Controller
     {
+        // Static instance of GameCollection to manage game state
         private static GameCollection gameCollection = new GameCollection();
 
+        // Default action to initialize the game board
         public IActionResult Index()
         {
+            // Retrieve game configuration from session (board size and difficulty)
             int? boardSize = HttpContext.Session.GetInt32("BoardSize");
             int? difficulty = HttpContext.Session.GetInt32("Difficulty");
 
+            // If configuration exists, initialize the game board
             if (boardSize.HasValue && difficulty.HasValue)
             {
+                // Generate and set up the game board
                 gameCollection.GenerateBoard(boardSize.Value);
                 gameCollection.SetupLiveNeighbors(difficulty.Value);
                 gameCollection.CalculateLiveNeighbors();
 
-                // Start timer as soon as player starts game
+                // Save the start time in the session
                 HttpContext.Session.SetObjectAsJson("StartTime", DateTime.Now);
 
-                // Save only necessary game state
+                // Save the initial game state to the session
                 HttpContext.Session.SetObjectAsJson("Board", gameCollection.Board);
                 HttpContext.Session.SetObjectAsJson("GameStatus", "Game in Progress");
 
+                // Render the game board view
                 return View("Index", gameCollection.Board);
             }
 
+            // Redirect to "Access Denied" if configuration is missing
             return View("AccessDenied");
         }
+
+        // Partial view to render the game board
         public IActionResult GameBoard()
         {
             return PartialView("GameBoard", gameCollection.Board);
         }
-        // Action method to process right mouse clicks to place a flag
+
+        // Handle right-click actions (place/remove a flag on a cell)
         [HttpPost]
         public IActionResult RightClickShowOneButton(int cellNumber)
         {
+            // Calculate cell's row and column based on its number
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
 
-            // Toggle flag state
+            // Toggle the flag state of the cell
             gameCollection.Board.TheGrid[row, col].IsFlag = !gameCollection.Board.TheGrid[row, col].IsFlag;
 
-            // Save the updated board to session
+            // Save the updated board state to the session
             HttpContext.Session.SetObjectAsJson("Board", gameCollection.Board);
+
+            // Return a partial view with the updated cell
             return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
         }
 
-
+        // Handle left-click actions (reveal a cell or process a game event)
         [HttpPost]
         public IActionResult LeftClickShowOneButton(int cellNumber)
         {
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
+
+            // If the cell is flagged, return without any action
             if (gameCollection.Board.TheGrid[row, col].IsFlag)
             {
                 return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
             }
             else
             {
-                // If the cell has no neighbors, perform FloodFill and return the entire board
+                // If the cell has no neighbors, use FloodFill to reveal adjacent cells
                 if (gameCollection.Board.TheGrid[row, col].NumNeighbors == 0)
                 {
                     gameCollection.FloodFill(row, col);
@@ -80,39 +96,41 @@ namespace CST350_Milestone.Controllers
                 {
                     // Mark the cell as visited
                     gameCollection.Board.TheGrid[row, col].IsVisited = true;
-                    
-                    // Check if the player win by calling the checker from GameCollection 
-                    if (gameCollection.IsWin() == true)
+
+                    // Check for win condition
+                    if (gameCollection.IsWin())
                     {
-                        // Return a JSON response with the redirect URL for the WinPage
                         return Json(new { redirectUrl = Url.Action("WinPage") });
                     }
 
-                    // Check if the cell is a bomb then return the lose page
-                    else if (gameCollection.Board.TheGrid[row, col].IsLive == true)
+                    // Check for lose condition (cell is a bomb)
+                    else if (gameCollection.Board.TheGrid[row, col].IsLive)
                     {
+                        // Reveal all cells
                         foreach (var cell in gameCollection.Board.TheGrid)
                         {
                             cell.IsVisited = true;
                         }
-                        // Return a JSON response with the redirect URL for the LosePage
+
                         return Json(new { redirectUrl = Url.Action("LosePage") });
                     }
-                    // Return only the updated button for the clicked cell
+
+                    // Return a partial view with the updated cell
                     return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
                 }
             }
-            
         }
 
-    // Action method to process left mouse clicks
-    public IActionResult ShowOneButton(int cellNumber)
+        // Render a single button (cell) view
+        public IActionResult ShowOneButton(int cellNumber)
         {
             int row = cellNumber / gameCollection.Board.Size;
             int col = cellNumber % gameCollection.Board.Size;
 
             return PartialView("ShowOneButton", gameCollection.Board.TheGrid[row, col]);
         }
+
+        // Render the win page
         public IActionResult WinPage()
         {
             int elapsedTime = GetElapsedTime();
@@ -121,7 +139,7 @@ namespace CST350_Milestone.Controllers
             return View();
         }
 
-        // lose section
+        // Render the lose page
         public IActionResult LosePage()
         {
             int elapsedTime = GetElapsedTime();
@@ -130,10 +148,7 @@ namespace CST350_Milestone.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Calculate elapsed time
-        /// </summary>
-        /// <returns></returns>
+        // Calculate the elapsed time from the start of the game
         public int GetElapsedTime()
         {
             DateTime? startTime = HttpContext.Session.GetObjectFromJson<DateTime?>("StartTime");
@@ -145,59 +160,38 @@ namespace CST350_Milestone.Controllers
             return 0;
         }
 
+        // Save the current game state
         [HttpPost]
         public IActionResult SaveGame()
         {
-
             string boardJson = ServiceStack.Text.JsonSerializer.SerializeToString(gameCollection.Board);
-
-
-            // Retrieve the game board and user information from the session
-            //var gameBoard = HttpContext.Session.GetObjectFromJson<BoardModel>("Board");
-            var user = HttpContext.Session.GetObjectFromJson<UserModel>("User"); // Assuming user is stored in session
+            var user = HttpContext.Session.GetObjectFromJson<UserModel>("User");
 
             if (boardJson == null || user == null)
             {
                 return BadRequest("Game state or user information is missing.");
             }
 
-            // Serialize the game state and user info into JSON
-            //string gameStateJson = Newtonsoft.Json.JsonConvert.SerializeObject(new
-            //{
-            //    Board = gameBoard,
-            //    UserId = user.Id
-            //});
-
-            // Call a service method to save the JSON string into the database
+            // Save the game state to the database
             bool isSaved = gameCollection.SaveGameState(user.Id, boardJson);
 
-            if (isSaved)
-            {
-                return Json(new { success = true, message = "Game state saved successfully!" });
-            }
-
-            return Json(new { success = false, message = "Failed to save game state." });
+            return Json(new { success = isSaved, message = isSaved ? "Game state saved successfully!" : "Failed to save game state." });
         }
 
-
+        // Retrieve all saved games for the user
         public IActionResult GetSavedGames()
         {
-            return PartialView("GetSavedGames",gameCollection.GetAllSavedGame());
+            return PartialView("GetSavedGames", gameCollection.GetAllSavedGame());
         }
 
+        // Delete a saved game by its ID
         [HttpPost]
         public IActionResult DeleteGameById(int id)
         {
             try
             {
-                if (gameCollection.DeleteGameById(id))
-                {
-                    return Json(new { success = true, message = "Game deleted successfully." });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Failed to delete the game." });
-                }
+                bool success = gameCollection.DeleteGameById(id);
+                return Json(new { success, message = success ? "Game deleted successfully." : "Failed to delete the game." });
             }
             catch (Exception ex)
             {
@@ -205,6 +199,24 @@ namespace CST350_Milestone.Controllers
             }
         }
 
+        // Load a saved game by its ID
+        public IActionResult LoadSavedGame(int id)
+        {
+            try
+            {
+                var savedGame = gameCollection.GetSavedGameById(id);
+                if (savedGame == null)
+                {
+                    return Json(new { success = false, message = "Saved game not found." });
+                }
 
+                var gameBoard = Newtonsoft.Json.JsonConvert.DeserializeObject<BoardModel>(savedGame.GameData);
+                return PartialView("GameBoard", gameBoard);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
     }
 }

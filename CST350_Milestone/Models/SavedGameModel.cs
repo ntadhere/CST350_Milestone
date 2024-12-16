@@ -7,6 +7,12 @@
         public DateTime DateSaved { get; set; }
         public string GameData { get; set; }
 
+        // Parameterless constructor
+        public SavedGameModel()
+        {
+        }
+
+        // Parameterized constructor
         public SavedGameModel(int id, string userId, DateTime dateSaved, string gameData)
         {
             Id = id;
