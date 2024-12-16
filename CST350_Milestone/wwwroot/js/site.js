@@ -1,73 +1,143 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-$(function () {
+﻿$(function () {
     console.log("Page is ready");
 
-    // JavaScript
-    // Attach an event listener to the entire document for the 'mousedown' event
-    // on elements with the class 'game-button'
+    // Attach an event listener to the Save button
+    $("#save-game").on("click", function () {
+        // Send a POST request to save the game
+        fetch('/Game/SaveGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Specify JSON data format
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include CSRF Token for security
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Display appropriate alert message based on success or failure
+                if (data.success) {
+                    alert(data.message);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error)); // Log any errors
+    });
+
+    // Attach an event listener to the document for mousedown on game buttons
     $(document).on("mousedown", ".game-button", function (event) {
+        var cellNumber = $(this).val(); // Get the cell number from the button value
 
-        // Get the value of the clicked button
-        var cellNumber = $(this).val();
-
-        // Use a switch statement to check with mouse button was clicked
         switch (event.which) {
-            // Left Mouse Button
-            case 1:
-                // Log the button number to the console
-                console.log("Cell number " + cellNumber + "  was left clicked.");
-                // Call the function 'doButtonUpdate' with the button number and a specific endpoint
-                doCellUpdate(cellNumber, 'Game/ShowOneButton');
+            case 1: // Left Mouse Button
+                console.log("Cell number " + cellNumber + " was left clicked.");
+                doCellUpdate(cellNumber, 'Game/LeftClickShowOneButton'); // Handle left click
                 break;
-            // Middle Mouse Button
-            case 2:
-                alert("Middle mouse button clicked");
+            case 2: // Middle Mouse Button
+                alert("Middle mouse button clicked"); // Handle middle click
                 break;
-            // Right Mouse Button
-            case 3:
-                // Log the button number to the console
-                console.log("Cell number " + cellNumber + "  was RIGHT clicked.");
-                // Call the function 'doButtonUpdate' with the button number and a specific endpoint
-                doCellUpdate(cellNumber, 'Game/RightClickShowOneButton');
+            case 3: // Right Mouse Button
+                console.log("Cell number " + cellNumber + " was RIGHT clicked.");
+                doCellUpdate(cellNumber, 'Game/RightClickShowOneButton'); // Handle right click
                 break;
             default:
-                alert("Nothing was clicked.");
+                alert("Nothing was clicked."); // Handle other clicks
                 break;
         }
     });
 
-    // Bind a new event to the context menu to prevent the right-click menu
-    // from appearing
-    // Whenever the context menu shows up call this fuction
+    // Handle "Load Saved Game" button click
+    $(document).on("click", ".load-saved-game", function () {
+        var gameId = $(this).data("id"); // Get game ID from button's data attribute
+
+        $.ajax({
+            url: '/Game/LoadSavedGame', // Endpoint to load saved game
+            method: 'POST',
+            data: { id: gameId }, // Send game ID to server
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // CSRF Token for security
+            },
+            success: function (response) {
+                // Update the game zone with the loaded game
+                $("#game-zone").html(response);
+                alert("Game loaded successfully!");
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading game:", error); // Log error
+                alert("An unexpected error occurred. Please try again.");
+            }
+        });
+    });
+
+    // Handle "Show Saved Games" button click
+    $(document).on("click", "#show-saved-game", function () {
+        // Fetch saved games and update the saved games zone
+        fetch('/Game/GetSavedGames')
+            .then(response => response.text())
+            .then(data => {
+                $("#saved-games-zone").html(data); // Display saved games
+            })
+            .catch(error => console.error('Error loading saved games:', error)); // Log errors
+    });
+
+    // Handle "Delete Game" button click
+    $(document).on("click", ".delete-game", function () {
+        var gameId = $(this).data("id"); // Get game ID from button's data attribute
+
+        // Confirm deletion before proceeding
+        if (confirm("Are you sure you want to delete this game?")) {
+            $.ajax({
+                url: '/Game/DeleteGameById', // Endpoint to delete game
+                method: 'POST',
+                data: { id: gameId }, // Send game ID to server
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // CSRF Token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Remove the game's row from the table and show success message
+                        $("#game-row-" + gameId).remove();
+                        alert(response.message);
+                    } else {
+                        alert(response.message); // Show failure message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting game:", error); // Log error
+                    alert("An unexpected error occurred. Please try again.");
+                }
+            });
+        }
+    });
+
+    // Prevent the default context menu from appearing on right-click
     $(document).bind("contextmenu", function (event) {
-        // Stop the right click menuu from showing up
-        event.preventDefault();
+        event.preventDefault(); // Disable right-click context menu
         console.log("Right Click. Prevented context menu");
     });
 
-    // Define the function 'doButtonUpdate' that takes two parameters: 'buttonNumber' and 'urlString'
+    // Define the function to update a cell
     function doCellUpdate(cellNumber, urlString) {
-        // Make an AJAX request using jQuery
         $.ajax({
-            // Set the expeected data type to 'json' for the responese
-            datatype: "json",
-            // Use the 'POST'method for the request
-            method: "POST",
-            // Set the url for the request using the value passed in 
-            url: urlString,
-            // Send data to the server, specificly the "buttonNumber as a key-value pair"
-            data: { "cellNumber": cellNumber },
-            // Define a callback function to handle a successful response
+            datatype: "html", // Specify expected response type
+            method: "POST",   // Use POST method for the request
+            url: urlString,   // Specify the endpoint URL
+            data: { "cellNumber": cellNumber }, // Send the cell number to server
             success: function (data) {
-                // Log the response to the console
-                console.log(data);
-                // Update the HTML content of the element with ID
-                $("#" + cellNumber).html(data);
+                if (data.redirectUrl) {
+                    // Redirect if a URL is provided in the response
+                    window.location.href = data.redirectUrl;
+                } else if (data.includes("id=\"game-zone\"")) {
+                    // Update the entire game zone if relevant data is returned
+                    $("#game-zone").html(data);
+                } else {
+                    // Update the specific cell with returned data
+                    $("#" + cellNumber).html(data);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX request failed:", error); // Log errors
             }
         });
     }
-}); //End Main Function
+}); // End Main Function
+

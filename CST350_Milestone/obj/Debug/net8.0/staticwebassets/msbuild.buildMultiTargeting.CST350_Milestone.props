@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\CST350_Milestone.props" />
+</Project>

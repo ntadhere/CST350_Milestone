@@ -1,29 +1,33 @@
+
 ﻿using CST350_Milestone.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System;
+using CST350_Milestone.Services.DataAccess;
 
 namespace CST350_Milestone.Services.Business
 {
     public class GameCollection
     {
+        // Represents the game board model instance
         private BoardModel board = new BoardModel();
 
-        // Public getter for the board to expose it for read-only access
+        // Public getter for the board to provide read-only access
         public BoardModel Board => board;
 
         /// <summary>
-        /// Generates a new game board with the specified size and initializes the grid.
+        /// Generates a new game board with the specified size and initializes its cells.
         /// </summary>
-        /// <param name="size">The size of the board</param>
-        /// <returns>Returns the populated board model</returns>
+        /// <param name="size">Size of the board (number of rows and columns)</param>
+        /// <returns>The initialized board model</returns>
         public BoardModel GenerateBoard(int size)
         {
-            int id = 0;
+            int id = 0; // Unique ID for each cell
             board.Size = size;
             board.TheGrid = new CellModel[size, size];
             board.CellListData = new List<CellModel>();
 
+            // Initialize each cell in the grid
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -38,20 +42,20 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Checks if a square is within the boundaries of the board.
+        /// Checks if a given cell is within the boundaries of the board.
         /// </summary>
         /// <param name="col">Column index</param>
         /// <param name="row">Row index</param>
-        /// <returns>True if the square is within the board; otherwise false</returns>
+        /// <returns>True if within bounds, otherwise false</returns>
         public bool IsSquareOnBoard(int col, int row)
         {
             return row >= 0 && row < board.Size && col >= 0 && col < board.Size;
         }
 
         /// <summary>
-        /// Checks whether the game has been won.
+        /// Determines if the game has been won by checking non-revealed cells.
         /// </summary>
-        /// <returns>True if the game is won; otherwise false</returns>
+        /// <returns>True if all non-bomb cells are revealed, otherwise false</returns>
         public bool IsWin()
         {
             int nonRevealedCells = 0;
@@ -61,13 +65,14 @@ namespace CST350_Milestone.Services.Business
                     nonRevealedCells++;
             }
 
+            // Game is won if non-revealed cells match the number of bombs
             return nonRevealedCells == board.Difficulty;
         }
 
         /// <summary>
-        /// Initializes live bomb cells randomly across the board based on the difficulty.
+        /// Sets up live bomb cells randomly across the board based on difficulty level.
         /// </summary>
-        /// <param name="difficulty">The difficulty determining the number of bombs</param>
+        /// <param name="difficulty">Number of bombs to place</param>
         public void SetupLiveNeighbors(int difficulty)
         {
             board.Difficulty = difficulty;
@@ -78,6 +83,7 @@ namespace CST350_Milestone.Services.Business
                 bool isSuccess = false;
                 while (!isSuccess)
                 {
+                    // Randomly select a cell for a bomb
                     int newRow = rnd.Next(0, board.Size);
                     int newCol = rnd.Next(0, board.Size);
                     if (!board.TheGrid[newCol, newRow].IsLive)
@@ -89,38 +95,32 @@ namespace CST350_Milestone.Services.Business
             }
         }
 
-        /// <summary>   
-        /// Calculates the number of live neighbors for each cell on the grid.
+        /// <summary>
+        /// Calculates the number of live neighbors for each cell.
         /// </summary>
         public void CalculateLiveNeighbors()
         {
-            // Iterate through all rows of the board
             for (int i = 0; i < board.Size; i++)
             {
-                // Iterate through all columns of the board
                 for (int j = 0; j < board.Size; j++)
                 {
-                    // Get the current cell at position (i, j)
                     var currentCell = board.TheGrid[i, j];
 
-                    // If the current cell is alive (a bomb), it has 9 neighbors
                     if (currentCell.IsLive)
                     {
-                        currentCell.NumNeighbors = 9; // Bombs have 9 neighbors
+                        // Bomb cells are marked with a special neighbor count
+                        currentCell.NumNeighbors = 9;
                     }
                     else
                     {
-                        // For non-live cells, check the 8 surrounding cells (neighbors)
+                        // Count neighboring bombs
                         for (int r = -1; r <= 1; r++)
                         {
                             for (int c = -1; c <= 1; c++)
                             {
-                                // Check if the neighbor is within the bounds of the grid
                                 if (IsSquareOnBoard(currentCell.ColNumber + r, currentCell.RowNumber + c) &&
-                                    // Check if the neighboring cell is alive
                                     board.TheGrid[currentCell.ColNumber + r, currentCell.RowNumber + c].IsLive)
                                 {
-                                    // Increment the number of neighbors if the adjacent cell is alive
                                     currentCell.NumNeighbors++;
                                 }
                             }
@@ -131,18 +131,21 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Applies flood fill to a given cell to reveal adjacent cells with 0 neighbors.
+        /// Implements a flood-fill algorithm to reveal adjacent empty cells.
         /// </summary>
-        /// <param name="col">Column index of the start cell</param>
-        /// <param name="row">Row index of the start cell</param>
+        /// <param name="col">Column index of the starting cell</param>
+        /// <param name="row">Row index of the starting cell</param>
         public void FloodFill(int col, int row)
         {
             if (!IsSquareOnBoard(col, row)) return;
             var currentCell = board.TheGrid[col, row];
 
+            // Stop if the cell is already visited or not empty
             if (currentCell.NumNeighbors != 0 || currentCell.IsVisited) return;
 
             currentCell.IsVisited = true;
+
+            // Recursively reveal adjacent cells
             FloodFill(col, row - 1); // North
             FloodFill(col + 1, row); // East
             FloodFill(col, row + 1); // South
@@ -150,9 +153,9 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Calculates the final score based on elapsed time.
+        /// Calculates the player's score based on elapsed time and difficulty.
         /// </summary>
-        /// <param name="elapsedTime">Elapsed time during the game</param>
+        /// <param name="elapsedTime">Time elapsed during the game</param>
         /// <returns>The calculated score</returns>
         public int CalculateGameScore(int elapsedTime)
         {
@@ -160,15 +163,47 @@ namespace CST350_Milestone.Services.Business
         }
 
         /// <summary>
-        /// Calculates score of the difficulty & boardsize
+        /// Saves the current game state to the database.
         /// </summary>
-        /// <param name="difficulty"></param>
-        /// <param name="boardSize"></param>
-        /// <returns></returns>
-        public int ScoreCalculator(int difficulty, int boardSize)
+        /// <param name="userId">User ID of the player</param>
+        /// <param name="gameDataJson">Serialized game data</param>
+        /// <returns>True if save was successful, otherwise false</returns>
+        public bool SaveGameState(int userId, string gameDataJson)
         {
-            int score = (boardSize * difficulty);
-            return Math.Max(score, 0);
+            UserDAO userDao = new UserDAO();
+            return userDao.SaveGameState(userId, gameDataJson);
+        }
+
+        /// <summary>
+        /// Retrieves all saved games from the database.
+        /// </summary>
+        /// <returns>A list of saved game models</returns>
+        public List<SavedGameModel> GetAllSavedGame()
+        {
+            UserDAO userDAO = new UserDAO();
+            return userDAO.GetAllSavedGames();
+        }
+
+        /// <summary>
+        /// Deletes a saved game from the database by ID.
+        /// </summary>
+        /// <param name="id">ID of the saved game to delete</param>
+        /// <returns>True if deletion was successful, otherwise false</returns>
+        public bool DeleteGameById(int id)
+        {
+            UserDAO userDAO = new UserDAO();
+            return userDAO.DeleteGameById(id);
+        }
+
+        /// <summary>
+        /// Retrieves a specific saved game by its ID.
+        /// </summary>
+        /// <param name="id">ID of the saved game</param>
+        /// <returns>The retrieved saved game model</returns>
+        public SavedGameModel GetSavedGameById(int id)
+        {
+            UserDAO userDAO = new UserDAO();
+            return userDAO.GetSavedGameById(id);
         }
     }
 }
