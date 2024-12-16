@@ -366,6 +366,7 @@ namespace CST350_Milestone.Services.DataAccess
         //=================== SAVE GAME SECTION ========================
         //==============================================================
         //==============================================================
+        // Method to save the game state for a specific user in the database
         public bool SaveGameState(int userId, string gameDataJson)
         {
             try
@@ -373,95 +374,158 @@ namespace CST350_Milestone.Services.DataAccess
                 // Establish a new SQL connection using the provided connection string.
                 using (SqlConnection connection = new SqlConnection(conn))
                 {
-                    connection.Open();
+                    connection.Open(); // Open the database connection
 
-                    // Step 2: If the user does not exist, proceed with the insertion
-                    // Replaced Player with MilestoneUser
+                    // SQL query to insert a new game record into the Games table
                     string query = @"INSERT INTO Games (UserId, DateSaved, GameData)
-                  VALUES (@UserId, GETDATE(), @GameData);
-                  SELECT SCOPE_IDENTITY();";
+                             VALUES (@UserId, GETDATE(), @GameData);
+                             SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        // Add parameters to securely pass user input values
+                        // Add parameters to securely pass user input values to the query
                         command.Parameters.AddWithValue("@UserId", userId);
                         command.Parameters.AddWithValue("@GameData", gameDataJson);
 
+                        // Execute the query and check if any rows were affected
                         int rowsAffected = command.ExecuteNonQuery();
-                        return rowsAffected > 0;
+                        return rowsAffected > 0; // Return true if at least one row was inserted
                     }
                 }
-
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the process
                 Console.WriteLine($"Error saving game state: {ex.Message}");
-                return false;
+                return false; // Return false if an error occurs
             }
         } // End SaveGameState method
 
+        // Method to retrieve all saved games from the database
         public List<SavedGameModel> GetAllSavedGames()
         {
-
-            // Create a new instance of the Saved Games list
+            // Create a new list to store all the saved games
             List<SavedGameModel> listSavedGames = new List<SavedGameModel>();
 
-            // Create a database query
+            // SQL query to select all records from the Games table
             string sqlStatement = "SELECT * FROM dbo.Games";
 
             using (SqlConnection connection = new SqlConnection(conn))
             {
                 try
                 {
-                    connection.Open();
-                    // Create a SQL command object using the query and open connection
+                    connection.Open(); // Open the database connection
+
+                    // Create a SQL command object with the query and connection
                     using (SqlCommand command = new SqlCommand(sqlStatement, connection))
                     {
+                        // Execute the query and retrieve the data using a SqlDataReader
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                // Add all the products to the list
-                                listSavedGames.Add(new SavedGameModel((int)reader[0], (string)reader[1], (DateTime)reader[2], (string)reader[3]));
+                                // Add each record to the list as a new SavedGameModel
+                                listSavedGames.Add(new SavedGameModel(
+                                    (int)reader[0],     // Game ID
+                                    (string)reader[1], // User ID
+                                    (DateTime)reader[2], // Date Saved
+                                    (string)reader[3]  // Game Data
+                                ));
                             }
                         }
                     }
-
                 }
-
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error fetching saved game: {ex.Message}");
+                    // Log any errors that occur during the process
+                    Console.WriteLine($"Error fetching saved games: {ex.Message}");
                 }
+                // Return the list of saved games (empty if an error occurred)
                 return listSavedGames;
             }
         }
 
+        // Method to delete a specific game from the database using its ID
         public bool DeleteGameById(int id)
         {
             try
             {
+                // Establish a new SQL connection using the provided connection string
                 using (SqlConnection connection = new SqlConnection(conn))
                 {
-                    connection.Open();
+                    connection.Open(); // Open the database connection
 
+                    // SQL query to delete a record from the Games table based on the ID
                     string query = "DELETE FROM Games WHERE Id = @Id";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        // Add parameter to securely pass the game ID to the query
                         command.Parameters.AddWithValue("@Id", id);
-                        int rowsAffected = command.ExecuteNonQuery();
 
-                        return rowsAffected > 0; // Returns true if at least one row is deleted
+                        // Execute the query and check if any rows were affected
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0; // Return true if at least one row was deleted
                     }
                 }
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the process
                 Console.WriteLine($"Error deleting game: {ex.Message}");
-                return false;
+                return false; // Return false if an error occurs
             }
         }
+
+
+        /// <summary>
+        /// get user by user id and return it
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public SavedGameModel GetSavedGameById(int id)
+        {
+            // Find the matching id number
+            using (SqlConnection connection = new SqlConnection(conn))
+            {
+                // Open the connection to the database
+                connection.Open();
+
+                // Define the SQL query to select a single users based on id
+                // Replaced Player with MilestoneUser
+                query = string.Format("SELECT * FROM Games WHERE Id = {0}", id);
+
+                // Create a SQL command object using the query and open connection
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Execute the command and obtain a SqlDataReader object to read the result set returned by the query
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Check if any records are returned (meaning a user with matching credentials exists)
+                        if (reader.Read())
+                        {
+                            // Create a UserModel object to store the user's details from the database
+                            SavedGameModel game = new SavedGameModel
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                UserId = reader.GetString(reader.GetOrdinal("UserId")),
+                                DateSaved = reader.GetDateTime(reader.GetOrdinal("DateSaved")),
+                                GameData = reader.GetString(reader.GetOrdinal("GameData"))
+                            };
+                            // Return the user's ID if the credential are valid
+                            return game;
+                        }
+                        // Return 0 if no matching user is found in the database
+                        // Create a UserModel object to store the user's details from the database
+                        SavedGameModel game2 = new SavedGameModel
+                        {
+                            Id = 0
+                        };
+                        return game2;
+                    }
+                }
+            }
+        } // End Get User by ID
 
     }
 }
