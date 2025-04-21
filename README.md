@@ -1,22 +1,34 @@
 # Minesweeper Website Application 💣🚩
 
-## Managing Your Music Platform Has Never Been Easier—or Prettier
+## Classic Logic. Modern Look. Save, Play, Repeat.
 
-Take control of your music collection with TempoTunes’ sleek interface and powerful playlist tools—effortless creation, organization, and sharing, all wrapped in a beautiful, responsive design.
+Challenge your mind with a modern take on the timeless Minesweeper game. With user authentication, game saving/loading features, and a fully responsive interface, your Minesweeper experience is better than ever.
 
 ## Application Demo 🌐
 
-![TempoTunes Homepage](./Documents/Img/homepage.png)
+- **Login to Play**: Users must log in before starting a game. Set up your custom board by entering the number of rows, columns, and bombs.
+
+<p>
+  <img src="./docs/img/login.png" alt="login page" width="45%" />
+  <img src="./docs/img/playground.png" alt="playground page" width="45%" />
+</p>
+
+- **Save and Load Games**: Pause your game anytime and save it. Resume right where you left off by loading from your list of saved games.
+
+<p>
+  <img src="./docs/img/gameProcess.png" alt="game process" width="45%" />
+  <img src="./docs/img/saveGame.png" alt="save game" width="45%" />
+</p>
 
 ## Features ⭐️
 
-- **Playlist Management**: Create, and delete playlists with custom cover images  
-- **Track Management**: Add, view, and remove tracks within playlists—specify title, artist, and duration  
-- **Home Dashboard**: Browse all playlists in a Bootstrap carousel and see a consolidated track list below  
-- **Single Playlist View**: Drill down into any playlist to view its details and track lineup  
-- **Modal‑Based Actions**: Use Bootstrap modals for adding/removing playlists and tracks without full page reloads  
-- **Responsive Design**: Fully responsive UI across desktop and mobile devices  
-- **Scrollable Track Lists**: Compact, scrollable containers with hidden scrollbars for a clean look  
-- **Dynamic Theming**: Per‑view background colors/images and a sticky footer artwork element  
-- **N‑Layer Architecture**: Clear separation between Controller → Service (Business) → DAO (DataAccess) layers, wired via dependency injection  
-- **Azure‑Ready Configuration**: Environment‑driven settings and connection strings for seamless deployment to Azure App Service  
+- **Custom Board Setup**: Choose your own grid size and number of bombs for personalized difficulty  
+- **User Authentication**: Secure login system to track individual progress and saved games  
+- **Game State Persistence**: Save and load games from the database to continue playing later  
+- **Live Game Interaction**: Click to reveal tiles, flag bombs, and clear the board—classic Minesweeper mechanics with smooth UX  
+- **Responsive Design**: Fully responsive interface, optimized for both desktop and mobile devices  
+- **Clean UI**: Modern interface with intuitive layouts and minimal distractions  
+- **Modal-Based Controls**: Bootstrap modals for actions like starting a new game or saving progress  
+- **Leaderboard (optional)**: *(If implemented)* Compare completion times or high scores with others  
+- **MVC Architecture**: Organized structure with Controller, Service, and Repository layers using Spring Boot  
+- **Deploy-Ready Setup**: Environment-based configuration for easy deployment to platforms like Azure or Heroku  
