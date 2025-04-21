@@ -1,0 +1,12 @@
+﻿@model CST350_Milestone.Models.BoardModel
+
+<div id="game-zone">
+    <div class="button-zone" style="--button-count: @Model.Size;">
+        @for (int i = 0; i < Model.CellListData.Count; i++)
+        {
+            <div id="@i" class="game-cell">
+                @Html.Partial("ShowOneButton", Model.CellListData[i])
+            </div>
+        }
+    </div>
+</div>
